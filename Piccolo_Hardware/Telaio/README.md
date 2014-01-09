@@ -28,7 +28,7 @@ _Telaio v4_
 
 ### Telaio v5
 
-Smaller/more resolved laser-cut version, still using the ES08D servos.  The smallest of all out piccolo designs, but with an output envelope of about 60x60x40mm.
+Smaller/more resolved laser-cut version, still using the ES08D servos.  The smallest of all our piccolo designs, but with an output envelope of about 60x60x40mm.
 
 This design was used at our first piccolo workshop at the [LiWoLi 2012 festival in Linz](http://blog.diatom.cc/piccolo/build-your-own-piccolo-workshop-at-linz).  In the archive there are two versions of the design, one using M2 cap screws and one using more common, M3 ones.  As with Piccolo v1, we reccomend using a combination of MDF and acrylic as shown in the photo to help reduce friction.
 

@@ -26,7 +26,7 @@ Early concept block-model looking at the dimensions of submicro servos and range
 
 ### Plotsi v3
 
-3D printable, also prototyped on a cupcake cnc but with less cheap emax digital ES08D servos.  Has a small 25x25x25mm output envelope.  Considerably larger with an output envelope of around 50x50x30mm roughly.
+3D printable, also prototyped on a cupcake cnc but with less cheap emax digital ES08D servos.  Considerably larger than v2 with an output envelope of around 50x50x30mm roughly.
 
 Used for an [installation at Tangíveis Resiência AZ](http://blog.diatom.cc/piccolo/piccolo-prototype-plotsi-at-tangiveis-residencia) in 2012, together with Teresa Cardoso.
 
