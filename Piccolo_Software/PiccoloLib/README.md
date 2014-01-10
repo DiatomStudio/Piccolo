@@ -13,7 +13,7 @@ PiccoloLib also includes usbTether in it's example directory. This is used to dr
 
 Taken from spiral example in examples folder.
 
-``` 
+``` c
 #include <Servo.h> //Needed in Piccolo Lib
 #include <PiccoloLib.h> //include the Piccolo Lib
 
