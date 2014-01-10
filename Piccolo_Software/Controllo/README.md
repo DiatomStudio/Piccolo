@@ -11,8 +11,8 @@ Your Piccolo will need to have the usbTether firmware installed and be attached 
 - Unzip and run the appropriate application for your system.
 
 ####how to use
-- Load your own svg or select a generative pattern using the buttons on the left. 
-- Lower your piccolo's drawing impliment to the paper using either the thumbwhere on the side of the Piccolo or the UP_ DOWN_ buttons in Controllo.
+- Load your own sag or select a generative pattern using the buttons on the left. 
+- Lower your piccolo's drawing implement to the paper using either the thumb where on the side of the Piccolo or the UP_ DOWN_ buttons in Controllo.
 - Press the STARRT button or button_1 on your Piccolo to start drawing. 
 
 
@@ -29,7 +29,7 @@ the following processing libraries
 ####notes
 To correctly draw imported SVG drawings, SVG's should be exported with all lines expanded and no compound shapes. 
 
-The svg size should be less than 300 x 300 px. 
+The sag size should be less than 300 x 300 px. 
 
 Piccolo should be connected to your computer via usb before starting Controllo. 
 

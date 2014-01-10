@@ -4,11 +4,11 @@
 float maxR = PICCOLO_BED_WIDTH / 2; //Spiral radius, reach to end of Piccolo draw area. 
 float minR = 1; //Min spiral radius. 
 
-PiccoloLib piccolo; //Make a instience of the Piccolo library for controlling Piccolo
+PiccoloLib piccolo; //Make a instance of the Piccolo library for controlling Piccolo
 
 void setup(){
 piccolo.setup(); //Setup Piccolo
-piccolo.home(); //Tell Picolo to goto it's home position. 
+piccolo.home(); //Tell Piccolo to goto it's home position. 
 
 }
 
@@ -19,7 +19,7 @@ delay(2000); //Wait 2 seconds before stating the loop again
 
 void drawSpiral(){
   
-  	float spacing = maxR/20; //Distace between loops.  	
+  	float spacing = maxR/20; //Distance between loops.  	
     piccolo.beginShape();
     for(float r = maxR; r > minR; r -= spacing) {
     for(float a=TWO_PI; a>0; a-= 0.01) {    
