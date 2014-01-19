@@ -5,6 +5,8 @@ import java.awt.FileDialog;
 import geomerative.*;
 import java.util.*;
 
+//git test
+
 boolean debugDraw = true; // draw Piccolo current position
 
 //Plotsi settings 
