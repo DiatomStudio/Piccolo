@@ -126,7 +126,7 @@ void draw() {
      }
 
 if(inString.startsWith("setZ")){
-  float zVal = Float.parseFloat(inString.substring(5,inString.length()));
+  float zVal = Float.parseFloat(inString.substring(5,inString.length()))/scaleOutput;
   pressure((int)zVal); 
   pressureKnob.setValue(zVal);
 }
