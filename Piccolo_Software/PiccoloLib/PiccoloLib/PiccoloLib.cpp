@@ -39,8 +39,8 @@ void PiccoloLib::setup(int servoMinX, int servoMaxX, int servoMinY, int servoMax
     
     invertAxis(false,false,false); /// set all axis to normal not flipped.
     
-    penUpPos = 200;
-    penDownPos = 150;
+    penUpPos = PICCOLO_DEFAULT_PEN_UP_POS;
+    penDownPos = PICCOLO_DEFAULT_PEN_DOWN_POS;
     
     
     //set the current position to 0,150,100
@@ -328,8 +328,7 @@ float PiccoloLib::dist(float x1, float y1,float z1,float x2,float y2,float z2){
 //Piccolo Mechanical Functions
 void PiccoloLib::home() {
     vertex(2, bedWidth/2, penUpPos);
-    //vertex(PICCOLO_BED_WIDTH/2, PICCOLO_BED_HEIGHT/2, penUpPos);
-    
+
 }
 
 
@@ -348,8 +347,13 @@ void PiccoloLib::setPressure() {
 
 void PiccoloLib::setPenDownPos(float pos){
     penDownPos = pos;
-    penUpPos = penDownPos + 50;
+    penUpPos = penDownPos + 5;
 }
+
+float PiccoloLib::getPenDownPos(){
+    return penDownPos;
+}
+
 
 //Serial functions
 

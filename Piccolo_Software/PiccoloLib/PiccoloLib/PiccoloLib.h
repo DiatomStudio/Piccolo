@@ -16,6 +16,10 @@
 #define PICCOLO_DEFAULT_BED_HEIGHT 50
 #define PICCOLO_DEFAULT_BED_DEPTH 50
 
+#define PICCOLO_DEFAULT_PEN_UP_POS 20
+#define PICCOLO_DEFAULT_PEN_DOWN_POS 20
+
+
 #define PICCOLO_DEFAULT_STEP_SIZE 0.1
 #define PICCOLO_DEFAULT_MM_PER_SEC 3
 
@@ -92,6 +96,8 @@ public:
     
     //Set Z down height
     void setPenDownPos(float pos);
+    float getPenDownPos();
+
     
     /* Piccolo brain inputs */
     float getThumbwheelVal();
