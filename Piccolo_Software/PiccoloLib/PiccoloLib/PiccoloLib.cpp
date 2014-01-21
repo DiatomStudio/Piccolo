@@ -407,11 +407,9 @@ void PiccoloLib::serialLoop() {
     //}
     
     if (gotPos) {
-        //Serial.println(inString);
-        
         /*
          for (int i=0; i<15; i++) {
-         Serial.print(inString[i]);
+         Serial.print(inString[i]-48);
          }
          Serial.println();
          delay(200);
@@ -448,7 +446,7 @@ float PiccoloLib::calcFloat(int data[], int ind) {
     sum += (data[ind+3]-48)*10;
     sum += (data[ind+4]-48);
     
-    return float(sum/100);
+    return float(sum/100.0);
 }
 
 
