@@ -2,7 +2,7 @@
 the tiny cnc bot
 ----------------
 
-Piccolo is a pocket-sized stand-alone CNC platform.  For more info please see [www.piccolo.cc](http://www.piccolo.cc)
+Piccolo is a pocket-sized stand-alone CNC platform.  For more info please see [www.piccolo.cc](http://www.piccolo.cc) *Stay tuned for a new website, coming soon!*
 
 [Piccolo Flickr Pool](http://www.flickr.com/groups/1929303@N21/)
 
