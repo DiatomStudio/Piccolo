@@ -2,15 +2,15 @@
 #include "PiccoloLib.h"
 
 
-Piccolo::Piccolo(){}
+PiccoloLib::PiccoloLib(){}
 
 /* ================================= setup functions ================================= */
 
-void Piccolo::setup() {
+void PiccoloLib::setup() {
     setup(SERVO_X_PIN, SERVO_Y_PIN, SERVO_Z_PIN);
 }
 
-void Piccolo::setup(int xPin, int yPin, int zPin){
+void PiccoloLib::setup(int xPin, int yPin, int zPin){
 
     X.setup(xPin);
     Y.setup(yPin);
@@ -27,7 +27,7 @@ void Piccolo::setup(int xPin, int yPin, int zPin){
     beginDrawFlag = false;
     drawing = false;
     thumbwheelZcontrol = false;
-    serialStream = false;
+    serialStream = true;
     disableMotion = false;
     
     pinMode(BUTTON_ONE_PIN, INPUT_PULLUP);           // set pin to input
@@ -40,64 +40,64 @@ void Piccolo::setup(int xPin, int yPin, int zPin){
     
 }
 
-void Piccolo::invert(boolean invertX, boolean invertY, boolean invertZ){
+void PiccoloLib::invert(boolean invertX, boolean invertY, boolean invertZ){
     X.invert(invertX);
     Y.invert(invertY);
     Z.invert(invertZ);
 }
 
-void Piccolo::moveCenter(float xOffset, float yOffset) {
+void PiccoloLib::moveCenter(float xOffset, float yOffset) {
     X.moveCenter(xOffset);
     Y.moveCenter(yOffset);
 }
 
-void Piccolo::moveCenter(float xOffset, float yOffset, float zOffset) {
+void PiccoloLib::moveCenter(float xOffset, float yOffset, float zOffset) {
     X.moveCenter(xOffset);
     Y.moveCenter(yOffset);
     Z.moveCenter(zOffset);
 }
 
-void Piccolo::calibrate(float targetDimension, float actualX, float actualY) {
+void PiccoloLib::calibrate(float targetDimension, float actualX, float actualY) {
     X.calcuSdeg(targetDimension, actualX);
     Y.calcuSdeg(targetDimension, actualY);
 }
 
-void Piccolo::calibrate(float targetDimension, float actualX, float actualY, float actualZ) {
+void PiccoloLib::calibrate(float targetDimension, float actualX, float actualY, float actualZ) {
     X.calcuSdeg(targetDimension, actualX);
     Y.calcuSdeg(targetDimension, actualY);
     Z.calcuSdeg(targetDimension, actualZ);
 }
 
-void Piccolo::setBedSize(float size) {
+void PiccoloLib::setBedSize(float size) {
     X.setBedSize(size);
     Y.setBedSize(size);
     Z.setBedSize(size);
 }
 
-void Piccolo::setBedSize(float xySize, float zSize) {
+void PiccoloLib::setBedSize(float xySize, float zSize) {
     X.setBedSize(xySize);
     Y.setBedSize(xySize);
     Z.setBedSize(zSize);
 }
 
 
-void Piccolo::setBedSize(float xSize, float ySize, float zSize) {
+void PiccoloLib::setBedSize(float xSize, float ySize, float zSize) {
     X.setBedSize(xSize);
     Y.setBedSize(ySize);
     Z.setBedSize(zSize);
 }
 
-void Piccolo::setSpeed(float _mmPerSecond){
+void PiccoloLib::setSpeed(float _mmPerSecond){
     mmPerSecond = _mmPerSecond; 
     calcDelayPerStep();
 }
 
-void Piccolo::setStepSize(float _stepSize){
+void PiccoloLib::setStepSize(float _stepSize){
     stepSize = _stepSize; 
     calcDelayPerStep();
 }
     
-void Piccolo::calcDelayPerStep(){
+void PiccoloLib::calcDelayPerStep(){
     delayPerStep = 1000 * (stepSize/mmPerSecond);
 }
 
@@ -265,20 +265,20 @@ int   PiccoloAxis::setuSmax(int _uSmax){
 
 /* ============================== mechanical functions =============================== */
 
-void Piccolo::moveX(float x){
+void PiccoloLib::moveX(float x){
     move(x, Y.getPos(), Z.getPos());
 }
-void Piccolo::moveY(float y){
+void PiccoloLib::moveY(float y){
     move(X.getPos(), y, Z.getPos());
 }
-void Piccolo::moveZ(float z){
+void PiccoloLib::moveZ(float z){
     move(X.getPos(), Y.getPos(), z);
 }
-void Piccolo::move(float x, float y){
+void PiccoloLib::move(float x, float y){
     move(x, y, Z.getPos());
 }
 
-void Piccolo::move(float x, float y, float z){
+void PiccoloLib::move(float x, float y, float z){
 
     // To remove and replace
     /*
@@ -291,11 +291,9 @@ void Piccolo::move(float x, float y, float z){
     if (serialStream) {
         Serial.print("x:");
         Serial.print(x);
-        Serial.print("\t"); //horizontal tab?
-        Serial.print("y:");
+        Serial.print(" y:");
         Serial.print(y);
-        Serial.print("\t"); //horizontal tab?
-        Serial.print("z");
+        Serial.print(" z");
         Serial.println(z);
     }
 
@@ -307,64 +305,64 @@ void Piccolo::move(float x, float y, float z){
 
 }
 
-void Piccolo::home() {
+void PiccoloLib::home() {
     vertex(-X.getBedSize()/2, 0, penUpPos);
 }
 
-void Piccolo::thumbwheelControlX(){
+void PiccoloLib::thumbwheelControlX(){
     float x = map(readThumbwheel(), 0, 1024, -X.getBedSize()/2, X.getBedSize()/2);
     moveX(x);
 }
-void Piccolo::thumbwheelControlY(){
+void PiccoloLib::thumbwheelControlY(){
     float y = map(readThumbwheel(), 0, 1024, -Y.getBedSize()/2, Y.getBedSize()/2);
     moveY(y);
 }
-void Piccolo::thumbwheelControlZ(){
+void PiccoloLib::thumbwheelControlZ(){
     float z = map(readThumbwheel(), 0, 1024, -Z.getBedSize()/2, Z.getBedSize()/2);
     moveZ(z);
 }
 
-void Piccolo::setPenDownPos(float _penDownPos){
+void PiccoloLib::setPenDownPos(float _penDownPos){
     penDownPos = _penDownPos;
     penUpPos = penDownPos + 5;
 }
 
-float Piccolo::getPenDownPos(){
+float PiccoloLib::getPenDownPos(){
     return penDownPos;
 }
 
 
 /* ============================== piccolo brain inputs =============================== */
 
-float Piccolo::readThumbwheel(){
+float PiccoloLib::readThumbwheel(){
     return analogRead(THUMBWHEEL_PIN);
 }
 
-boolean Piccolo::buttonOneDown(){
+boolean PiccoloLib::buttonOneDown(){
     return !digitalRead(BUTTON_ONE_PIN);
 }
 
-boolean Piccolo::buttonTwoDown(){
+boolean PiccoloLib::buttonTwoDown(){
     return !digitalRead(BUTTON_TWO_PIN);
 }
 
 
 /* ================================== draw functions ================================= */
 
-void Piccolo::beginDraw(){
+void PiccoloLib::beginShape(){
     beginDrawFlag = true;
 }
 
-void Piccolo::endDraw(){
+void PiccoloLib::endShape(){
     vertex(X.getPos(), Y.getPos(), penUpPos);
     drawing = false;
 }
 
-void Piccolo::vertex(float x, float y) {
+void PiccoloLib::vertex(float x, float y) {
     vertex(x, y, Z.getPos());
 }
 
-void Piccolo::vertex(float x, float y, float z) {
+void PiccoloLib::vertex(float x, float y, float z) {
     
     if(beginDrawFlag){
         beginDrawFlag = false;
@@ -396,21 +394,21 @@ void Piccolo::vertex(float x, float y, float z) {
 
 }
 
-void Piccolo::line(float x1, float y1, float x2, float y2){
+void PiccoloLib::line(float x1, float y1, float x2, float y2){
     vertex(x1, y1, penDownPos);
     vertex(x2, y2, penDownPos);
 }
 
-void Piccolo::line(float x1, float y1, float z1, float x2, float y2, float z2){
+void PiccoloLib::line(float x1, float y1, float z1, float x2, float y2, float z2){
     vertex(x1, y1, z1);
     vertex(x2, y2, z2);
 }
 
-void Piccolo::rect(float x, float y, float width,float height) {
+void PiccoloLib::rect(float x, float y, float width,float height) {
     rect(x, y, penDownPos, width, height);
 }
 
-void Piccolo::rect(float x, float y, float z, float width,float height) {
+void PiccoloLib::rect(float x, float y, float z, float width,float height) {
     vertex(x, y, z);
     vertex(x+width, y, z);
     vertex(x+width, y+height, z);
@@ -418,19 +416,19 @@ void Piccolo::rect(float x, float y, float z, float width,float height) {
     vertex(x, y, z);
 }
 
-void Piccolo::ellipse(float x, float y, float width, float height){
+void PiccoloLib::ellipse(float x, float y, float width, float height){
     if(width == 0 || height == 0)
         return;
     
     float arcStep = (stepSize/(width*PI));
-    endDraw();
+    endShape();
     arc(x, y, width, height, 0, 0);
-    beginDraw();
+    beginShape();
     arc(x, y, width, height, 0, TWO_PI+arcStep);
-    endDraw();
+    endShape();
 }
 
-void Piccolo::arc(float x , float y , float width, float height, float startA, float stopA){
+void PiccoloLib::arc(float x , float y , float width, float height, float startA, float stopA){
     float arcStep = (stepSize/((width/2)*PI));
     
     for(float a=stopA ; a >= startA; a-=arcStep) {
@@ -438,7 +436,7 @@ void Piccolo::arc(float x , float y , float width, float height, float startA, f
     }
 }
 
-void Piccolo::bezier(float x1, float y1, float cx1, float cy1, float cx2, float cy2, float x2, float y2){
+void PiccoloLib::bezier(float x1, float y1, float cx1, float cy1, float cx2, float cy2, float x2, float y2){
     float len = 0;
     float px = x1;
     float py = y1;
@@ -462,12 +460,12 @@ void Piccolo::bezier(float x1, float y1, float cx1, float cy1, float cx2, float 
     }
 }
 
-float Piccolo::bezierPoint(float a, float b, float c, float d, float t) {
+float PiccoloLib::bezierPoint(float a, float b, float c, float d, float t) {
     float t1 = 1.0f - t;
     return a*t1*t1*t1 + 3*b*t*t1*t1 + 3*c*t*t*t1 + d*t*t*t;
 }
 
-float Piccolo::bezierTangent(float a, float b, float c, float d, float t) {
+float PiccoloLib::bezierTangent(float a, float b, float c, float d, float t) {
     return (3*t*t * (-a+3*b-3*c+d) +
             6*t * (a-2*b+c) +
             3 * (-a+b));
@@ -476,15 +474,22 @@ float Piccolo::bezierTangent(float a, float b, float c, float d, float t) {
 
 /* ================================== math functions ================================= */
 
-float Piccolo::dist(float x1, float y1, float z1, float x2, float y2, float z2){
+float PiccoloLib::dist(float x1, float y1, float z1, float x2, float y2, float z2){
     return sqrt( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1) );
 }
 
-float Piccolo::dist(float dx, float dy, float dz){
+float PiccoloLib::dist(float dx, float dy, float dz){
     return sqrt( dx*dx + dy*dy + dz*dz );
 }
 
-float Piccolo::calcFloat(int data[], int ind) {
+
+/*
+float PiccoloLib::calcFloat(char *str){
+return (float)(((int)strtoul(str,NULL,CHAR_PER_POS)))/100.0;
+}
+
+
+float PiccoloLib::calcFloat(int data[], int ind) {
     int sum;
     sum += (data[ind+0]-48)*10000;
     sum += (data[ind+1]-48)*1000;
@@ -494,21 +499,106 @@ float Piccolo::calcFloat(int data[], int ind) {
     
     return float(sum/100.0);
 }
-
+*/
 
 /* ================================ serial functions ================================= */
 
 
 
-void Piccolo::serialSetup() {
+void PiccoloLib::serialSetup() {
 
     Serial.begin(115200);
-    serialStream = true;
+    serialStream = false; // only set this if we want to stream back our movements to the console 
 
 }
 
 
-void Piccolo::serialLoop() {
+float PiccoloLib::calcFloat(byte b_1, byte b_2, byte b_3, byte b_4){
+ long packed = 0;
+
+/*
+
+ Serial.println("CalcFloat:");
+  delay(100);
+
+ Serial.println(packed,BIN);
+
+
+ delay(100);
+Serial.print("b1:");
+Serial.print((byte)b_1,BIN);
+ delay(100);
+
+Serial.print("b2:");
+Serial.print((byte)b_2,BIN);
+ delay(100);
+
+Serial.print("b3:");
+Serial.print((byte)b_3,BIN);
+ delay(100);
+
+Serial.print("b4:");
+Serial.print((byte)b_4,BIN);
+ delay(100);
+
+
+
+Serial.println();
+
+delay(100);
+
+Serial.print("var0:");
+Serial.print(packed,DEC);
+Serial.print("-");
+Serial.print(packed,BIN);
+delay(100);
+
+ packed |= (unsigned long)b_1 << 24 ;
+
+ Serial.print("var1:");
+Serial.print(packed,DEC);
+Serial.print("-");
+Serial.print(packed,BIN);
+delay(100);
+
+  packed |= (unsigned long)b_2 << 16 ;
+
+  Serial.print("var2:");
+Serial.print(packed,DEC);
+Serial.print("-");
+Serial.print(packed,BIN);
+delay(100);
+
+  packed |= (unsigned long)b_3 << 8 ;
+
+  Serial.print("var3:");
+Serial.print(packed,DEC);
+Serial.print("-");
+Serial.print(packed,BIN);
+delay(100);
+
+  packed |= (unsigned long)b_4 & 0x00FF;
+
+  Serial.print("var4:");
+Serial.print(packed,DEC);
+Serial.print("-");
+Serial.print(packed,BIN);
+Serial.println();
+delay(100);
+
+*/
+//delay(1000);
+//cast to long first so bits have room
+ packed |= (long)b_1 << 24 ;
+ packed |= (long)b_2 << 16 ;
+ packed |= (long)b_3 << 8 ;
+ packed |= (long)b_4 ;
+
+//return (float)packed; 
+return((float)packed)/100.0f;
+}
+
+void PiccoloLib::serialLoop() {
 
     float xPosIn;
     float yPosIn;
@@ -519,25 +609,29 @@ void Piccolo::serialLoop() {
         inByte = Serial.read();
         if(inByte == 'S') {
             index = 0;
-            for (int i=0; i<15; i++) {
+            for (int i=0; i<25; i++) {
                 inString[i] = 0;
             }
             Serial.println('B');
             delay(300);
         }
-        else if(inByte == ';') {
-            xPosIn = calcFloat(inString,0);
-            yPosIn = calcFloat(inString,5);
-            zPosIn = calcFloat(inString,10);
-            index = 0;
+        else if(inByte == ';'  && index > 10) {
+
+            xPosIn = calcFloat((byte)inString[3],(byte)inString[2],(byte)inString[1],(byte)inString[0]);
+            yPosIn = calcFloat((byte)inString[7],(byte)inString[6],(byte)inString[5],(byte)inString[4]);
+            zPosIn = calcFloat((byte)inString[11],(byte)inString[10],(byte)inString[9],(byte)inString[8]);
+
             gotPos = true;
+            index = 0;
+
+
         }
         else if(inByte == 'E') {
             home();
         }
         
         else {
-            inString[index] = int(inByte);
+            inString[index] = inByte;
             index++;
         }
 
@@ -546,10 +640,37 @@ void Piccolo::serialLoop() {
     if (gotPos) {
         vertex(xPosIn, yPosIn, zPosIn);
         gotPos = false;
-        for (int i=0; i<15; i++) {
+
+        /*
+        Debug
+        delay(500);
+
+        Serial.print('x');
+        Serial.print(xPosIn,DEC);
+        Serial.print('y');
+        Serial.print(yPosIn,DEC);
+        Serial.print('z');
+        Serial.println(zPosIn,DEC);
+
+        delay(500);
+
+        for (int i=0; i<12; i++) {
+
+            Serial.print((byte)inString[i],BIN);
+            Serial.print('-');
+
             inString[i] = 0;
         }
+
+        Serial.println();
+
+        delay(500);
+        */
         Serial.println('B');
+
+
+
+        //Serial.println(tmpPosStr);
     }
     
 }

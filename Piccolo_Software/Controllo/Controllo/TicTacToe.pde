@@ -1,3 +1,4 @@
+//TODO: maybe this can be moved to it's own seperate sketch
 
 void drawGrid(PGraphics g) {
   

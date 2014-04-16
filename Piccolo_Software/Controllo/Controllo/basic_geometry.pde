@@ -1,17 +1,17 @@
-
+//TODO: add paramaters to all commands 
 
 void drawCircles(PGraphics g) {
 
-  int o = 150;
-  int r = 120;
+  int o = 0;
+  int r = 25; //radius
   int a = 4; 
-  int b = 48;
+  int b = 100;
 
   float x;
   float y; 
 
   g.beginShape();
-  for (int i = r; i > 10; i -= a) {
+  for (int i = r; i > 1; i -= a) {
     for (float j=TWO_PI; j>0; j-= TWO_PI/b) {
       x = i*sin(j)+o;
       y = i*cos(j)+o;
@@ -19,26 +19,29 @@ void drawCircles(PGraphics g) {
     }
   }
   g.endShape();
-  g.point(150, 290); //home
 }
 
 
+
+void drawSpiral(PGraphics g){
+  
+  
+}
+
 void drawBoxes(PGraphics g) {
 
-  int o = 150;
-  int r = 120;
-  int a = 4; 
+  int w = 25; //half box width
+  int a = 1; //step size
 
   g.beginShape();
-  for (int i = r; i > 10; i -= a) {
-    g.vertex(o+i, o+i);
-    g.vertex(o+i, o-i);
-    g.vertex(o-i, o-i);
-    g.vertex(o-i, o+i);
-    g.vertex(o+i, o+i);
+  for (int i = w; i > 1; i -= a) {
+    g.vertex(+i, +i);
+    g.vertex(+i, -i);
+    g.vertex(-i, -i);
+    g.vertex(-i, +i);
+    g.vertex(+i, +i);
   }
   g.endShape();
-  g.point(150, 290); //home
 }
 
 

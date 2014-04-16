@@ -143,11 +143,11 @@ private:
 };
 
 
-class Piccolo
+class PiccoloLib
 {
 public:
 
-    Piccolo();
+    PiccoloLib();
     
     PiccoloAxis X;
     PiccoloAxis Y;
@@ -195,8 +195,8 @@ public:
     void serialLoop();   
     
     /* draw functions */
-    void beginDraw();
-    void endDraw();
+    void beginShape();
+    void endShape();
     void vertex (float x,  float y);
     void vertex (float x,  float y,  float z);
     void line   (float x1, float y1, float x2, float y2);
@@ -230,12 +230,18 @@ private:
 
   	float dist(float x1, float y1, float z1, float x2, float y2, float z2);
     float dist(float dx, float dy, float dz);
-    float calcFloat(int data[], int ind);
+
+    //float calcFloat(char *str);
+    //float calcFloat(int data[], int ind);
+    float calcFloat(byte b_1, byte b_2, byte b_3, byte b_4);
+
 
 	/* Serial functions */
     //void establishContact();
+    #define CHAR_PER_POS 8
     byte inByte;
-	int inString[15];  // xxxxxyyyyyzzzzz
+	byte inString[25];  // xxxxxxxxyyyyyyyzzzzzzzz;
+    byte tmpPosStr[CHAR_PER_POS];  //copy inString into this for converting from HEX
 	int index;
 	boolean gotPos;
     

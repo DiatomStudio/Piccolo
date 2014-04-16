@@ -1,76 +1,131 @@
+/*
+Notes:
+- Should we separate plotsiWriter to it's own library?
+- Could Controllo be a example in this library?
+- Can we make seperate sketches / apps for generative drawings etc so that we can keep controllo clean and simple?
+- If so how would a exhibition setup work? webpage to launch diff apps.
+*
+
+/*
+Controllo 
+by: Diatom Studio , 2013
+
+This program controls and sends drawing commands to a Piccolo teathered by a usb cable. 
+All coodinates are sent in pixels/mm and are scaled for drawing to the screen. 
+Coordinates are centred around XYZ at 0,0,0.
+
+*/
+
 //Libraries
 import controlP5.*;
 import processing.serial.*;
 import java.awt.FileDialog;
 import geomerative.*;
 import java.util.*;
+import javax.swing.JOptionPane;
 
-//git test
 
-boolean debugDraw = true; // draw Piccolo current position
+//debug output all serial communications to the console for debugging. 
+boolean debug = true; 
+boolean serialConnected = false;
 
-//Plotsi settings 
-boolean flipX = true;
-boolean flipY = true;
+
+boolean view3D = false; // display view in 3D
+
+//Piccolo send coordinate settings, all false by default
+//These should be reflected in GUI
+boolean flipX = false; 
+boolean flipY = false;
 boolean flipZ = false;
-boolean rotateBed = true;
+boolean rotateBed = false;
 
 
-float bedWidth = 300; 
-float bedHeight = 300; 
-float bedDepth = 300; 
+//Piccolo bed size in mm
+float bedWidth = 50; 
+float bedHeight = 50; 
+float bedDepth = 50; 
 
-float myX = bedWidth/2;
-float myY = bedHeight/2;
-float myZ = bedDepth/2;
+float bedRenderWidth = 300;
 
-
-float scaleOutput = 0.16666666666667; // scale pixels to Piccolo coordinates
+//current position of drawing command to send
+float xPos = 0;        
+float yPos = 0;      
+float zPos = 0;  
 
 //the height to lift the pen between 2d shapes
-float penDownHeight = 90; // change using slider
-float penLiftHeight = penDownHeight+50; //change using slider
+float penDownHeight = -bedDepth/2; // change using slider
+float penLiftHeight = penDownHeight+2; //change using slider
 
+//TODO: scale render not output. 
+//TODO: resize SVG to fit bed.
+// scale pixels to Piccolo coordinates
+float scaleOutput = 0.16666666666667; 
 
-float xPos = bedWidth/2;        
-float yPos = bedHeight/2;      
-float zPos = bedDepth/2;  
-
+//TODO: this should be removed or moved to make code more straight forward.
 //sensor sets
 public float lightLevel = 0.5;
 
-PShape loadedSVG;
+PShape loadedSVG; //svg loaded for sending to piccolo.
+/*
+Currently loaded SVG is shown on screen until user presses start. 
+At this point the SVG is loaded into the output canvas and sent to Piccolo. 
+It might be a better idea to always load drawing shapes directly into the output 
+canvas so that they always reflect what Piccolo is drawing. 
+*/
+
+
 boolean sendPenHeight = false;
 
 List path = new ArrayList();
-List codeStack = new ArrayList();
-PlotiWriter writer = new PlotiWriter();
+
+PlotsiWriter writer = new PlotsiWriter(bedWidth,bedHeight,bedDepth);
 ControlP5 controlP5;
 CheckBox drawPlotsiOutput;
 Knob pressureKnob;
 
-PGraphics plotsiOutputCanvas; 
+PGraphics plotsiOutputCanvas;  //all lines drawn to this canvas will be sent to Piccolo
 
 
 void setup() {
-  size(500, 340);
+  size(500, 340,P3D);
   plotsiOutputCanvas = createGraphics((int)bedWidth, (int)bedHeight);
   plotsiOutputCanvas.beginDraw();
   plotsiOutputCanvas.smooth();
-  //plotsiOutputCanvas.background(255);
   plotsiOutputCanvas.endDraw();
 
-  //detail
+  //canvas defaults
   writer.setStepRes(1f);
   writer.bezierDetail(20); 
 
+  //setup GUI
   controlP5 = new ControlP5(this);
   drawInterface();
 
+
+
+        String s = (String) JOptionPane.showInputDialog(
+                null,
+                "Select Piccolo's COM Port",
+                "Select Piccolo",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                Serial.list(),
+                Serial.list()[Serial.list().length-1]
+                );
+        
+println(s);
+
   // List all the available serial ports
-  println(Serial.list());
-  myPort = new Serial(this, Serial.list()[Serial.list().length -1 ], 115200);
-  myPort.bufferUntil('\n');
+  //TODO: select serial port at this point. 
+try{
+  writer.serial = new Serial(this, s, 115200);
+  writer.serial.bufferUntil('\n');
+  serialConnected = true;
+}catch(Exception e){
+  serialConnected = false;
+
+}
+  
 
   // Initialise Geomerative for working with type.
   RG.init(this);
@@ -83,159 +138,27 @@ void setup() {
 void draw() {
 
   background(255, 255, 255);
+  ortho(0, width, 0, height); // same as ortho()
+  pushMatrix();
+  translate((bedRenderWidth/2) + 150, (bedRenderWidth/2)+20, (bedRenderWidth/2));
+  
 
-  if (loadedSVG != null)
-    shape(loadedSVG, 150, 10);
+  if(view3D){
+    rotateX(PI/4.0);
+    rotateZ(PI/4.0);
+}
 
-  /*  
-   plotsiOutputCanvas.beginDraw();
-   writer.simulate(plotsiOutputCanvas);
-   plotsiOutputCanvas.endDraw();
-   */
-
-  //debug draw
-  if (plotsiOutputCanvas!=null)
-    image (plotsiOutputCanvas, 150, 10);
-  stroke(100, 100, 100);
-  noFill();
-  rect(150, 10, bedWidth, bedHeight);
-
-
-  //====== moved from serialEvent() =======//
-
-  while (myPort.available () > 0) {
-
-    String inString = myPort.readStringUntil('\n') ;//was causing occasional Null Pointer Exceptions.
-   
-    if (inString == null)
-      break;
-      
-   
-    inString = trim(inString);//Until('\n'));  
-
-   
-
-    println("|"+inString +"|");
-    myPort.clear();
-
-
-    if (inString.startsWith("G01")) {
-      debugDraw(inString);
-    }
-
-    if(inString.startsWith("start")){
-    start(0);
-     }
-
-if(inString.startsWith("setZ")){
-  float zVal = Float.parseFloat(inString.substring(5,inString.length()))/scaleOutput;
-  pressure((int)zVal); 
-  pressureKnob.setValue(zVal);
+  writer.draw(g,bedRenderWidth);
+  popMatrix();
+  writer.serialLoop();
 }
 
 
-    if (inString.equals("A")) { 
-      myPort.clear();
-      println("Plotsi Connected!");      
-      println("Ready to Plot!");
-      //myPort.write(stepDelay);
-    }
-    else if (inString.equals("B") && lineCount < codeStack.size()) {
-      println("begin sending positions");
-      myPort.clear();
-      float x = ((PVector)(codeStack.get(lineCount))).x*scaleOutput;
-      float y = ((PVector)(codeStack.get(lineCount))).y*scaleOutput;
-      float z = ((PVector)(codeStack.get(lineCount))).z*scaleOutput;
-
-      String xString = Integer.toString(int(x*100));
-      String yString = Integer.toString(int(y*100));
-      String zString = Integer.toString(int(z*100));
-
-     // println("ZString before " +zString);
 
 
-      if (debugDraw) {
-        /*
-        if (flipX)
-          x = map(x, 0, bedWidth, bedWidth, 0);
-
-        if (flipY)
-          y = map(y, 0, bedHeight, bedHeight, 0);
-  */
-        plotsiOutputCanvas.beginDraw();
-        plotsiOutputCanvas.stroke(255, 0, 0);
-        plotsiOutputCanvas.noFill();
-        plotsiOutputCanvas.ellipse( x/scaleOutput, y/scaleOutput, 2, 2);
-        plotsiOutputCanvas.endDraw();
-      }
-      
-      while(xString.length() < 5)
-              xString = "0"+xString;
-              
-      while(yString.length() < 5)
-              yString = "0"+yString;
-
-      while(zString.length() < 5)
-              zString = "0"+zString;
-
-
-/*
-      if (xString.length() < 4) {
-        xString = "00"+xString;
-      }
-      if (xString.length() < 5) {
-        xString = "0"+xString;
-      }
-     
-      if (yString.length() < 4) {
-        yString = "00"+yString;
-      }        
-      if (yString.length() < 5) {
-        yString = "0"+yString;
-      }
-      if (zString.length() < 4) {
-        zString = "00"+zString;
-      }        
-      if (zString.length() < 5) {
-        zString = "0"+zString;
-      }
- */
- 
- //rotate the bed by swapping x-y
- if(rotateBed)
-       sendString =  yString + xString + zString + ';';
- else
-      sendString = xString + yString + zString + ';';
-      // println(sendString);
-      //println(sendString.length());
-      myPort.write(sendString);
-      sendStringIndex = 1;
-      /*
-       println("line#"+lineCount+" of "+codeStack.size()); 
-       println(sendString);
-       println(x + " " + y + " " + z);
-      println("XString " +xString);
-      println("YString " +yString);
-      println("ZString " +zString);
-      */
-            lineCount++;
-
-
-      if ((lineCount)==codeStack.size()) {
-        myPort.write('E');
-        delay(10);
-        println("finished!");
-        //stop();
-      }
-    } 
-    else {
-      //println(inByte);
-      myPort.clear();
-    }
-  }
-
-
-  //========================//
+void keyPressed(){
+  if(key == '3')
+    view3D = !view3D;
 }
 
 void drawInterface() {
@@ -253,12 +176,6 @@ void drawInterface() {
   controlP5.addButton("boxes", 0, 10, 150, 80, 19);
   controlP5.addButton("diagonals", 0, 10, 170, 80, 19);
   controlP5.addButton("word", 0, 10, 190, 80, 19);
-
-  //  controlP5.addButton("W", 0, 10, 170, 15, 19);
-  //  controlP5.addButton("I", 0, 30, 170, 15, 19);
-  //  controlP5.addButton("R", 0, 50, 170, 15, 19);
-  //  controlP5.addButton("E", 0, 70, 170, 15, 19);
-  //  controlP5.addButton("D", 0, 90, 170, 15, 19);
 
   pressureKnob = controlP5.addKnob("pressure")
     .setRange(0, bedDepth)
@@ -280,9 +197,17 @@ void drawInterface() {
 
   controlP5.addButton("home", 0, 10, height-80, 80, 19);
   controlP5.addButton("start", 0, 10, height-60, 80, 19);
-    controlP5.addButton("stop", 0, 10, height-40, 80, 19);
+  controlP5.addButton("stop", 0, 10, height-40, 80, 19);
 
 }
+
+
+
+
+
+
+
+
 
 
 
@@ -314,28 +239,40 @@ void debugDraw(String inString) {
   plotsiOutputCanvas.endDraw();
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
 public void start(int val) {
   if (loadedSVG != null) {
     writer.clear();
     writer.shape(loadedSVG);
   }
-  establishContact();
+  writer.establishContact();
 }
 
 public void penUp(int val) {
   writer.clear(); 
-  writer.vertex(bedWidth/2, bedHeight/2, penLiftHeight);
-  writer.vertex(bedWidth/2, bedHeight/2, penLiftHeight);
+  writer.vertex(0 , 0, penLiftHeight);
+  writer.vertex(0, 0, penLiftHeight);
 
-  establishContact();
+  writer.establishContact();
 }
 
 public void penDown(int val) {
   writer.clear(); 
-  writer.vertex(bedWidth/2, bedHeight/2, 0);
-  writer.vertex(bedWidth/2, bedHeight/2, 0);
+  writer.vertex(0, 0, 0);
+  writer.vertex(0, 0, 0);
 
-  establishContact();
+  writer.establishContact();
 }
 
 
@@ -343,18 +280,23 @@ public void load_SVG(int val) {
 
   FileDialog fd = new FileDialog(frame, "open", 
   FileDialog.LOAD);
-  //fd.setFile("chair" + SETTINGS.chairSaveNum + ".svg");
   String currentDir = new File(".").getAbsolutePath();
-  //fd.setDirectory(currentDir + "\\savedChairs\\");
   fd.setLocation(50, 50);
   fd.pack();
-
   fd.show();
 
   if (fd.getName() != null) {
     String filename = fd.getFile();
     clearCanvas();
     loadedSVG = loadShape(fd.getDirectory() + filename);
+
+
+plotsiOutputCanvas.beginDraw();
+loadedSVG.scale(0.3); 
+plotsiOutputCanvas.shape(loadedSVG,0,0);
+plotsiOutputCanvas.endDraw();
+loadedSVG = null;
+
     //loadedSVG.scale(0.6); 
     //loadedSVG.disableStyle();
   } 
@@ -372,13 +314,6 @@ void clearCanvas() {
   loadedSVG = null;
 }
 
-void drawCanvas() {
-  plotsiOutputCanvas.beginDraw();
-  plotsiOutputCanvas.background(255);
-  plotsiOutputCanvas.noFill();
-  writer.debugDraw(plotsiOutputCanvas);
-  plotsiOutputCanvas.endDraw();
-}
 
 void pressure(int val) {
   penDownHeight = val;
@@ -392,8 +327,8 @@ void up_() {
   penDownHeight+=5;
   penLiftHeight = penDownHeight+40;
   writer.clear();
-  writer.stepTo(150, 300, penDownHeight);
-  establishContact();
+  writer.stepTo(0, 0, penDownHeight);
+  writer.establishContact();
   clearCanvas();
 }
 
@@ -402,17 +337,60 @@ void down_() {
   println(penDownHeight);
   penLiftHeight = penDownHeight+40;
   writer.clear();
-  writer.stepTo(150, 300, penDownHeight);
-  establishContact();
+  writer.stepTo(0, 0, penDownHeight);
+  writer.establishContact();
   clearCanvas();
 }
 
 void home() {
   writer.clear();
-  writer.stepTo(150, 290, penLiftHeight);
-  establishContact();
+  writer.stepTo(0, 0, penLiftHeight);
+  writer.establishContact();
  // clearCanvas();
 }
+
+
+void stop(){
+ writer.clear();
+}
+
+
+public void Up(int val) {
+  println("Up");
+  writer.clear();
+  writer.establishContact();
+  if (zPos<90)
+  {
+    zPos+=10;
+    writer.stepTo(xPos, yPos, zPos);
+  }
+  print("myZ:");
+  println(xPos);
+  println(yPos);
+  println(zPos);
+}
+
+public void Down(int val) {
+  writer.clear();
+  writer.establishContact();
+  if (zPos>10)
+  {
+    zPos-=10;
+    writer.stepTo(xPos, yPos, zPos);
+  }
+  print("myZ:");
+  println(xPos);
+  println(yPos);
+  println(zPos);
+}
+
+
+
+
+
+
+
+
 
 // =========================================================== //
 
@@ -420,21 +398,18 @@ public void TicTacToe() {
   writer.clear();
   clearCanvas();
   drawGrid(writer);
-  drawCanvas();
 }
 
 public void generate_tree() {
   writer.clear();
   clearCanvas();
   generatePlant( lightLevel, writer);
-  drawCanvas();
 }
 
 public void generate_mustache() {
   writer.clear();
   clearCanvas();
   drawMustache(writer);
-  drawCanvas();
 }
 
 public void logo(int val) {
@@ -447,97 +422,31 @@ public void circles() {
   writer.clear();
   clearCanvas();
   drawCircles(writer);
-  drawCanvas();
 }
 
 public void boxes() {
   writer.clear();
   clearCanvas();
   drawBoxes(writer);
-  drawCanvas();
 }
 
 public void diagonals() {
   writer.clear();
   clearCanvas();
   drawDiagonals(writer);
-  drawCanvas();
 }
 
 public void word() {
   writer.clear();
   clearCanvas();
   drawWord(writer);
-  drawCanvas();
-}
-
-/*
-public void brush_Mustache() {
- writer.clear();
- clearCanvas();
- drawBrushMustache(writer);
- 
- plotsiOutputCanvas.beginDraw();
- plotsiOutputCanvas.background(255);
- plotsiOutputCanvas.noFill();
- writer.debugDraw(plotsiOutputCanvas);
- plotsiOutputCanvas.endDraw();
- }
- 
- public void maze() {
- writer.clear();
- clearCanvas();
- loadedSVG = loadShape("maze.svg");
- }  
- */
-
-
-/*
-
-void mouseReleased() {
-
-  if (sendPenHeight) {    
-    writer.clear();
-    writer.stepTo(myX, myY, penDownHeight);
-    establishContact();
-    sendPenHeight = false;
-  }
-}
-*/
-
-
-void stop(){
-  lineCount = 0;
-  codeStack.clear();
 }
 
 
-public void Up(int val) {
-  println("Up");
-  writer.clear();
-  establishContact();
-  if (myZ<90)
-  {
-    myZ+=10;
-    writer.stepTo(myX, myY, myZ);
-  }
-  print("myZ:");
-  println(myX);
-  println(myY);
-  println(myZ);
-}
 
-public void Down(int val) {
-  writer.clear();
-  establishContact();
-  if (myZ>10)
-  {
-    myZ-=10;
-    writer.stepTo(myX, myY, myZ);
-  }
-  print("myZ:");
-  println(myX);
-  println(myY);
-  println(myZ);
-}
+
+
+
+
+
 

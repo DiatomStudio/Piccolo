@@ -1,3 +1,4 @@
+
 #include <Servo.h>      //Needed in PiccoloLib
 #include <PiccoloLib.h> //include PiccoloLib
 
@@ -29,25 +30,25 @@ void loop(){
 
   // If button two is pressed for more than two seconds, draw test circles.
   // Did the button state change?
-  if(!btnTwoDown && piccolo.btnTwoDown())
+  if(!btnTwoDown && piccolo.buttonTwoDown())
     tstBtnDwnTime = millis();
 
   // Is button two down and has been held down for more than 2 seconds?
-  if(piccolo.btnTwoDown() && millis() - tstBtnDwnTime > 2000){
+  if(piccolo.buttonTwoDown() && millis() - tstBtnDwnTime > 2000){
     drawCircles();
     tstBtnDwnTime = 0;
   }
 
   // Store button two state
-  btnTwoDown = piccolo.btnTwoDown();
+  btnTwoDown = piccolo.buttonTwoDown();
 
   // If button one is pressed send the start drawing command.
   // Did button one state change?
-  if(!btnOneDown && piccolo.btnOneDown())
+  if(!btnOneDown && piccolo.buttonOneDown())
     Serial.println("start");
 
   //Store button one state
-  btnOneDown = piccolo.btnOneDown();
+  btnOneDown = piccolo.buttonOneDown();
 
 }
 
@@ -64,7 +65,7 @@ void drawCircles(){
   for(float r = maxR; r > minR; r -= spacing) {
     float stepSize = stepsPerMM / (2*r*PI);
     for(float a=TWO_PI; a>0; a-= stepSize) {    
-      piccolo.vertex(sin(a)*r+(piccolo.getBedWidth()/2.0f),cos(a)*r+(piccolo.getBedHeight()/2.0f));
+      piccolo.vertex(sin(a)*r+(piccolo.X.getBedSize()/2.0f),cos(a)*r+(piccolo.Y.getBedSize()/2.0f));
     }
   }
 
@@ -72,6 +73,5 @@ void drawCircles(){
   
   piccolo.home();
 }
-
 
 
