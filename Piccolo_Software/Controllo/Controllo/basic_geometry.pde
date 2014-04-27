@@ -1,20 +1,38 @@
 //TODO: add paramaters to all commands 
 
+
+
+void drawBezier(PGraphics g){
+
+PVector p1 = new PVector(-25,-25,0);
+PVector p2 = new PVector(25,25,0);
+PVector c1 = new PVector(25,-25,0);
+PVector c2 = new PVector(25,-25,0);
+
+
+for(int i = 0; i < 25; i+=2){
+  c1.x = i; c1.y = -i;
+  c2.x = i; c2.y = -i;
+  g.bezier(p1.x, p1.y,c1.x,c1.y,c2.x,c2.y, p2.x, p2.y);
+}
+
+}
 void drawCircles(PGraphics g) {
 
   int o = 0;
   int r = 25; //radius
-  int a = 4; 
+  int a = 1; 
   int b = 100;
+  int startRad = 5;
 
   float x;
   float y; 
 
   g.beginShape();
-  for (int i = r; i > 1; i -= a) {
-    for (float j=TWO_PI; j>0; j-= TWO_PI/b) {
-      x = i*sin(j)+o;
-      y = i*cos(j)+o;
+  for (int i = startRad; i <= r; i += a) {
+    for (float j=TWO_PI; j>0; j-= TWO_PI/(i*10)) {
+      x = (i-(a*(j/TWO_PI)))*sin(j)+o;
+      y = (i-(a*(j/TWO_PI)))*cos(j)+o;
       g.vertex(x, y);
     }
   }

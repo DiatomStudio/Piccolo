@@ -43,8 +43,11 @@ class PlotsiWriter extends PGraphics {
   float bedDepth= DEFAULT_BED_WIDTH;
 
   float bedDrawHeight = -(bedDepth/2.0f) ; // Piccolo draws with x, y and z starting in the center of the draw area. 
-
-
+  
+  float scale = 1.0;
+  float translateX = 0.0;
+  float translateY = 0.0;
+  float translateZ = 0.0;
 
 
 /*Serial Commands
@@ -84,7 +87,18 @@ public PlotsiWriter(float _w, float _h, float _d){
 //screenCanvas = createGraphics(screenCanvasW, screenCanvasH);
 }
 
-  public void vertex(float x, float y) {
+@Override
+public void vertex(float x, float y) {
+      //put this on the vertecies stack before we translate
+    super.vertex(x, y);
+
+
+    x *= scale; 
+    y *= scale;
+
+    x += translateX;
+    y += translateY;
+
 
     if (closeShape) {
       beginShapePos = new PVector(x, y, penDownHeight);
@@ -109,11 +123,23 @@ public PlotsiWriter(float _w, float _h, float _d){
     println("vertex: {x:"+x+ " y:"+y+ "}");
 
 
-    super.vertex(x, y);
   }
 
-
+@Override
   public void vertex(float x, float y, float z) {
+
+    //put this on the vertecies stack before we translate
+    super.vertex(x, y, z);
+
+
+
+    x *= scale; 
+    y *= scale;
+    z *= scale; 
+
+    x += translateX;
+    y += translateY;
+    z += translateZ;
 
     if (closeShape) {
       beginShapePos = new PVector(x, y, bedDrawHeight);
@@ -131,8 +157,34 @@ public PlotsiWriter(float _w, float _h, float _d){
   if(debugVertex)
     println("vertex: {x:"+x+ " y:"+y+ " z:"+z+"}");
 
-    super.vertex(x, y, z);
   }
+
+
+
+  //This is a filler function to scale drawing commands, This should eventually be replaced with the standard Matrix commands 
+  public void scale(float _scale){
+    scale = _scale;
+  }
+
+  //translate vertex points after scale has been applied
+    public void translate(float _x, float _y, float _z){
+    translateX = _x; 
+    translateY = _y; 
+    translateZ = _z; 
+
+  }
+  
+@Override
+ void popMatrix(){
+  scale = 1.0; 
+  translateX = 0;
+  translateY = 0;
+  translateZ = 0;
+ }
+@Override
+void resetMatrix(){
+  popMatrix();
+}
 
   /*
   TODO: Add this function
@@ -241,6 +293,7 @@ public PlotsiWriter(float _w, float _h, float _d){
 
   void draw(PGraphics g, float _drawSize) {
 
+
     float scale = _drawSize/bedWidth;
     PVector prev = null;
 
@@ -248,11 +301,13 @@ public PlotsiWriter(float _w, float _h, float _d){
       PVector p = (PVector)codeStack.get(i);
 
       if (prev != null) {
-        if (p.z > penLiftHeight )//!= 0 || prev.z != 0)
-          g.stroke(0);
+
+        if (p.z > penDownHeight || prev.z > penDownHeight)//!= 0 || prev.z != 0)
+          g.stroke(0,0,0,50);
         else
           g.stroke(0);
 
+      g.strokeWeight(1);
 
 
 if(debugDraw)
@@ -357,9 +412,9 @@ if(inString.startsWith("setZ")){
       float z = ((PVector)(writer.codeStack.get(lineCount))).z;
 
 
-int xScaled = (int)(x*100.0);
-int yScaled = (int)(y*100.0);
-int zScaled = (int)(z*100.0);
+      int xScaled = (int)(x*100.0);
+      int yScaled = (int)(y*100.0);
+      int zScaled = (int)(z*100.0);
 
 
 /*

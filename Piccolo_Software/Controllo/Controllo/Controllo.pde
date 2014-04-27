@@ -1,19 +1,18 @@
 /*
-Notes:
-- Should we separate plotsiWriter to it's own library?
-- Could Controllo be a example in this library?
-- Can we make seperate sketches / apps for generative drawings etc so that we can keep controllo clean and simple?
-- If so how would a exhibition setup work? webpage to launch diff apps.
-*
-
-/*
 Controllo 
 by: Diatom Studio , 2013
 
 This program controls and sends drawing commands to a Piccolo teathered by a usb cable. 
 All coodinates are sent in pixels/mm and are scaled for drawing to the screen. 
 Coordinates are centred around XYZ at 0,0,0.
+*/
 
+/*
+Notes:
+- Should we separate plotsiWriter to it's own library?
+- Could Controllo be a example in this library?
+- Can we make seperate sketches / apps for generative drawings etc so that we can keep controllo clean and simple?
+- If so how would a exhibition setup work? webpage to launch diff apps.
 */
 
 //Libraries
@@ -24,16 +23,14 @@ import geomerative.*;
 import java.util.*;
 import javax.swing.JOptionPane;
 
-
 //debug output all serial communications to the console for debugging. 
 boolean debug = true; 
 boolean serialConnected = false;
 
-
 boolean view3D = false; // display view in 3D
 
 //Piccolo send coordinate settings, all false by default
-//These should be reflected in GUI
+//TODO: These should be reflected in GUI
 boolean flipX = false; 
 boolean flipY = false;
 boolean flipZ = false;
@@ -41,9 +38,9 @@ boolean rotateBed = false;
 
 
 //Piccolo bed size in mm
-float bedWidth = 50; 
-float bedHeight = 50; 
-float bedDepth = 50; 
+float bedWidth = 50.0; 
+float bedHeight = 50.0; 
+float bedDepth = 50.0; 
 
 float bedRenderWidth = 300;
 
@@ -51,6 +48,10 @@ float bedRenderWidth = 300;
 float xPos = 0;        
 float yPos = 0;      
 float zPos = 0;  
+
+
+boolean fitSVGtoBed = true;
+
 
 //the height to lift the pen between 2d shapes
 float penDownHeight = -bedDepth/2; // change using slider
@@ -72,7 +73,6 @@ At this point the SVG is loaded into the output canvas and sent to Piccolo.
 It might be a better idea to always load drawing shapes directly into the output 
 canvas so that they always reflect what Piccolo is drawing. 
 */
-
 
 boolean sendPenHeight = false;
 
@@ -101,19 +101,17 @@ void setup() {
   controlP5 = new ControlP5(this);
   drawInterface();
 
+  String s = (String) JOptionPane.showInputDialog(
+      null,
+      "Select Piccolo's COM Port",
+      "Select Piccolo",
+      JOptionPane.PLAIN_MESSAGE,
+      null,
+      Serial.list(),
+      Serial.list()[Serial.list().length-1]
+  );
 
-
-        String s = (String) JOptionPane.showInputDialog(
-                null,
-                "Select Piccolo's COM Port",
-                "Select Piccolo",
-                JOptionPane.PLAIN_MESSAGE,
-                null,
-                Serial.list(),
-                Serial.list()[Serial.list().length-1]
-                );
-        
-println(s);
+  println(s);
 
   // List all the available serial ports
   //TODO: select serial port at this point. 
@@ -140,13 +138,22 @@ void draw() {
   background(255, 255, 255);
   ortho(0, width, 0, height); // same as ortho()
   pushMatrix();
-  translate((bedRenderWidth/2) + 150, (bedRenderWidth/2)+20, (bedRenderWidth/2));
+  translate((bedRenderWidth/2) + 150, (bedRenderWidth/2)+20,0);
   
 
   if(view3D){
     rotateX(PI/4.0);
     rotateZ(PI/4.0);
-}
+    translate(0,0,(bedRenderWidth/2));
+   }
+
+  stroke(0);
+  noFill();
+
+  pushMatrix();
+  translate(0,0,-(bedRenderWidth/2));
+  rect(-(bedRenderWidth/2),-(bedRenderWidth/2),bedRenderWidth,bedRenderWidth);
+  popMatrix();
 
   writer.draw(g,bedRenderWidth);
   popMatrix();
@@ -158,7 +165,10 @@ void draw() {
 
 void keyPressed(){
   if(key == '3')
-    view3D = !view3D;
+    view3D = true;
+
+    if(key == '2')
+    view3D = false;
 }
 
 void drawInterface() {
@@ -169,7 +179,7 @@ void drawInterface() {
   controlP5.addButton("generate_tree", 0, 10, 50, 80, 19);
   controlP5.addButton("generate_mustache", 0, 10, 70, 80, 19);
   //  controlP5.addButton("brush_Mustache", 0, 10, 120, 80, 19);
-  controlP5.addButton("TicTacToe", 0, 10, 90, 80, 19);  
+  controlP5.addButton("bezier", 0, 10, 90, 80, 19);  
   controlP5.addButton("logo", 0, 10, 110, 80, 19);
   //  controlP5.addButton("maze", 0, 10, 180, 80, 19);
   controlP5.addButton("circles", 0, 10, 130, 80, 19);
@@ -201,16 +211,6 @@ void drawInterface() {
 
 }
 
-
-
-
-
-
-
-
-
-
-
 void debugDraw(String inString) {
   plotsiOutputCanvas.beginDraw();
   float[] posIn = float(split(inString, ","));
@@ -239,23 +239,8 @@ void debugDraw(String inString) {
   plotsiOutputCanvas.endDraw();
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
 public void start(int val) {
-  if (loadedSVG != null) {
-    writer.clear();
-    writer.shape(loadedSVG);
-  }
+
   writer.establishContact();
 }
 
@@ -281,24 +266,34 @@ public void load_SVG(int val) {
   FileDialog fd = new FileDialog(frame, "open", 
   FileDialog.LOAD);
   String currentDir = new File(".").getAbsolutePath();
+
+
   fd.setLocation(50, 50);
   fd.pack();
   fd.show();
 
   if (fd.getName() != null) {
+
     String filename = fd.getFile();
     clearCanvas();
-    loadedSVG = loadShape(fd.getDirectory() + filename);
+    PShape svg = loadShape(fd.getDirectory() + filename);
+    svg.disableStyle();
+    writer.beginDraw();
+    writer.clear();
+    writer.pushMatrix();
 
+    if(fitSVGtoBed)
+    writer.scale(bedWidth / max(svg.width,svg.height) );
+    else
+    writer.scale(0.16666666666667);
 
-plotsiOutputCanvas.beginDraw();
-loadedSVG.scale(0.3); 
-plotsiOutputCanvas.shape(loadedSVG,0,0);
-plotsiOutputCanvas.endDraw();
-loadedSVG = null;
+    writer.translate(-(bedWidth/2.0),-(bedHeight/2.0),0.0);
+    writer.shape(svg,0,0);
+    writer.popMatrix();
+    writer.endDraw();
 
     //loadedSVG.scale(0.6); 
-    //loadedSVG.disableStyle();
+    //
   } 
   else {
     // println("not an stl file");
@@ -386,12 +381,6 @@ public void Down(int val) {
 
 
 
-
-
-
-
-
-
 // =========================================================== //
 
 public void TicTacToe() {
@@ -442,7 +431,12 @@ public void word() {
   drawWord(writer);
 }
 
+public void bezier(){
+  writer.clear();
+  clearCanvas();
+  drawBezier(writer);
 
+}
 
 
 
