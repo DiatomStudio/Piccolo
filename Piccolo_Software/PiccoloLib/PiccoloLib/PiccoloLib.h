@@ -76,6 +76,14 @@
 #define DEFAULT_PEN_DOWN_POS -5
 
 
+/*Draw Orientations from piccolo's perspective*/
+#define ORIENTATION_LEFT   0     // default, drawing with bottom of drawing to the left
+#define ORIENTATION_TOP    1      // top, as if piccolo is draw upside down
+#define ORIENTATION_RIGHT  2     // right, drawing with bottom of drawing to the right
+#define ORIENTATION_BOTTOM 3   // bottom, as if piccolo is draw the correct way up
+           
+
+
 class PiccoloAxis
 { 
 public:
@@ -143,6 +151,17 @@ private:
 };
 
 
+
+/* Command Bytes */
+    #define  COMMAND_CONNECT          'C'    //connect byte                      from computer       
+    #define  COMMAND_SEND_NEXT        'B'    //send the next packet              from piccolo
+    #define  COMMAND_READY            'A'    //piccolo ready to plot!            from piccolo
+    #define  COMMAND_POS_START_BYTE   'P'    //start of position                 from computer
+    #define  COMMAND_POS_END_BYTE     ';'    //end of position                   from computer
+    #define  COMMAND_END_STACK        'E'    //finished sending current stack.   from computer
+
+
+
 class PiccoloLib
 {
 public:
@@ -174,6 +193,7 @@ public:
     void moveZ(float z);
     void move(float x, float y);
     void move(float x, float y, float z);
+    void setDrawOrientation(int _orientation);
     void home();
 
     //tentative
@@ -208,6 +228,10 @@ public:
     void bezier (float x1, float  y1, float  cx1, float  cy1, float  cx2, float  cy2, float  x2, float  y2);
     float bezierPoint  (float a, float b, float c, float d, float t);
     float bezierTangent(float a, float b, float c, float d, float t);
+
+    boolean serialStream;    // Streams coordinates over Serial as G-Code
+    boolean disableMotion;   // disables servo motion, for debugging purposes
+    int drawOrientation;     // Piccolo's current draw orientation. 
 
     
 private:
@@ -244,10 +268,8 @@ private:
     byte tmpPosStr[CHAR_PER_POS];  //copy inString into this for converting from HEX
 	int index;
 	boolean gotPos;
-    
-	boolean serialStream;    // Streams coordinates over Serial as G-Code
-    boolean disableMotion;   // disables servo motion, for debugging purposes
-  
+    boolean waitingForPos;
+
 };
 
 

@@ -6,9 +6,45 @@ PlotsiWriter will currently only send stroke commands and does not support fills
 */
 int CHAR_PER_POS = 8;
 
+
+
+//Piccolo send coordinate settings, all false by default
+//TODO: These should be reflected in GUI
+boolean flipX = false; 
+boolean flipY = false;
+boolean flipZ = false;
+boolean rotateBed = false;
+
+
+
+//debug output all serial communications to the console for debugging. 
+boolean debug = true; 
+boolean serialConnected = false;
+
+
+
+//TODO: scale render not output. 
+//TODO: resize SVG to fit bed.
+// scale pixels to Piccolo coordinates
+float scaleOutput = 0.16666666666667; 
+
+
+
+
+//the height to lift the pen between 2d shapes
+float penDownHeight = -bedDepth/2; // change using slider
+float penLiftHeight = penDownHeight+2; //change using slider
+
+
+
+
+
 class PlotsiWriter extends PGraphics {
 
 
+  
+  boolean sendPenHeight = true;
+  
   boolean translateCenter = false; //if true all coordinates are translated by half the bed height and width to match Piccolo's native coordinate system. 
   PVector beginShapePos = null;
   boolean closeShape = false;
@@ -533,5 +569,22 @@ if(inString.startsWith("setZ")){
       serial.write((byte)(i>>16)); // X
       serial.write((byte)(i>>24)); // X
   }
+  
+  
+  public void start(int val) {
+
+  writer.establishContact();
+}
+
+
+void pressure(int val) {
+  penDownHeight = val;
+  penLiftHeight = penDownHeight+50;
+  sendPenHeight = true;
+ // clearCanvas();
+  // establishContact();
+}
+
+
 }
 

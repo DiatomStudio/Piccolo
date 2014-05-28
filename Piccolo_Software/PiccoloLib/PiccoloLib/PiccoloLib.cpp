@@ -27,7 +27,7 @@ void PiccoloLib::setup(int xPin, int yPin, int zPin){
     beginDrawFlag = false;
     drawing = false;
     thumbwheelZcontrol = false;
-    serialStream = true;
+    serialStream = false;
     disableMotion = false;
     
     pinMode(BUTTON_ONE_PIN, INPUT_PULLUP);           // set pin to input
@@ -36,7 +36,9 @@ void PiccoloLib::setup(int xPin, int yPin, int zPin){
     
     index = 0;
     gotPos = false;
+    waitingForPos = false;
     
+    drawOrientation = ORIENTATION_LEFT;
     
 }
 
@@ -190,6 +192,8 @@ void PiccoloAxis::setBedSize(float newSize){
 void PiccoloAxis::move(float _pos){
     int uStarget;
 
+
+
     if(inverted) {
         uStarget = uScenter - _pos * uSmm;
     } else {
@@ -280,22 +284,19 @@ void PiccoloLib::move(float x, float y){
 
 void PiccoloLib::move(float x, float y, float z){
 
-    // To remove and replace
-    /*
-    if (thumbwheelZcontrol && drawing) {
-        z = map(readThumbwheel(), 0, 1024, -Z.getBedSize()/2, Z.getBedSize()/2);
-        setPenDownPos(z);
-    }
-    */
+
 
     if (serialStream) {
         Serial.print("x:");
         Serial.print(x);
         Serial.print(" y:");
         Serial.print(y);
-        Serial.print(" z");
-        Serial.println(z);
+        Serial.print(" z:");
+        Serial.print(z);
+        Serial.println();
+        delay(10);
     }
+
 
     if (!disableMotion) {
         X.move(x);
@@ -303,10 +304,69 @@ void PiccoloLib::move(float x, float y, float z){
         Z.move(z);
     }
 
+
+
 }
 
+void PiccoloLib::setDrawOrientation(int _orientation){
+
+     drawOrientation = _orientation;
+
+
+switch(_orientation){
+    case ORIENTATION_LEFT: // Invert Y
+    X.setup(SERVO_X_PIN);
+    Y.setup(SERVO_Y_PIN);
+    Z.setup(SERVO_Z_PIN);
+    //default orientation 
+    break;
+
+    case ORIENTATION_TOP: // 90 degrees swap X and Y Axis
+
+    X.setup(SERVO_Y_PIN); // swap X & Y axis
+    Y.setup(SERVO_X_PIN);
+    Z.setup(SERVO_Z_PIN);
+    break;
+
+    case ORIENTATION_RIGHT: // Invert Y
+    X.setup(SERVO_X_PIN);
+    Y.setup(SERVO_Y_PIN);
+    Z.setup(SERVO_Z_PIN);
+    Y.invert(true);
+    break;
+
+    case ORIENTATION_BOTTOM:
+    X.setup(SERVO_Y_PIN); // swap X & Y axis
+    Y.setup(SERVO_X_PIN);
+    Z.setup(SERVO_Z_PIN);
+    Y.invert(true);
+    break;
+}
+
+}
+
+
 void PiccoloLib::home() {
-    vertex(-X.getBedSize()/2, 0, penUpPos);
+
+    switch(drawOrientation){
+
+        case ORIENTATION_LEFT:
+            vertex(-X.getBedSize()/2, 0, penUpPos);
+        break;
+
+        case ORIENTATION_TOP:
+            vertex(0, -X.getBedSize()/2, penUpPos);
+        break;
+
+        case ORIENTATION_RIGHT:
+            vertex(X.getBedSize()/2,0, penUpPos);
+        break;
+
+        case ORIENTATION_BOTTOM:
+            vertex(0,X.getBedSize()/2, penUpPos);
+        break;
+
+    }
 }
 
 void PiccoloLib::thumbwheelControlX(){
@@ -380,15 +440,18 @@ void PiccoloLib::vertex(float x, float y, float z) {
         float moveDelta = dist(dx, dy, dz);       // total move distance
         int numSteps = ceil(moveDelta/stepSize);  // number of steps to take
 
+
+
         for(int i = 0; i < numSteps; i++){
             move(                                 // move in increments of stepSize
-                    px + (float(dx/numSteps) * i),
-                    py + (float(dy/numSteps) * i),
-                    pz + (float(dz/numSteps) * i)
+                    px + (float(dx/numSteps) * float(i)),
+                    py + (float(dy/numSteps) * float(i)),
+                    pz + (float(dz/numSteps) * float(i))
                 );
             delay(delayPerStep);
         }
         move(x, y, z); // move to final position as last step.
+
         delay(delayPerStep);
     }
 
@@ -430,7 +493,7 @@ void PiccoloLib::ellipse(float x, float y, float width, float height){
 
 void PiccoloLib::arc(float x , float y , float width, float height, float startA, float stopA){
     float arcStep = (stepSize/((width/2)*PI));
-    
+
     for(float a=stopA ; a >= startA; a-=arcStep) {
         vertex((sin(a)*width) + x, (cos(a)*height) + y);
     }
@@ -516,77 +579,7 @@ void PiccoloLib::serialSetup() {
 float PiccoloLib::calcFloat(byte b_1, byte b_2, byte b_3, byte b_4){
  long packed = 0;
 
-/*
 
- Serial.println("CalcFloat:");
-  delay(100);
-
- Serial.println(packed,BIN);
-
-
- delay(100);
-Serial.print("b1:");
-Serial.print((byte)b_1,BIN);
- delay(100);
-
-Serial.print("b2:");
-Serial.print((byte)b_2,BIN);
- delay(100);
-
-Serial.print("b3:");
-Serial.print((byte)b_3,BIN);
- delay(100);
-
-Serial.print("b4:");
-Serial.print((byte)b_4,BIN);
- delay(100);
-
-
-
-Serial.println();
-
-delay(100);
-
-Serial.print("var0:");
-Serial.print(packed,DEC);
-Serial.print("-");
-Serial.print(packed,BIN);
-delay(100);
-
- packed |= (unsigned long)b_1 << 24 ;
-
- Serial.print("var1:");
-Serial.print(packed,DEC);
-Serial.print("-");
-Serial.print(packed,BIN);
-delay(100);
-
-  packed |= (unsigned long)b_2 << 16 ;
-
-  Serial.print("var2:");
-Serial.print(packed,DEC);
-Serial.print("-");
-Serial.print(packed,BIN);
-delay(100);
-
-  packed |= (unsigned long)b_3 << 8 ;
-
-  Serial.print("var3:");
-Serial.print(packed,DEC);
-Serial.print("-");
-Serial.print(packed,BIN);
-delay(100);
-
-  packed |= (unsigned long)b_4 & 0x00FF;
-
-  Serial.print("var4:");
-Serial.print(packed,DEC);
-Serial.print("-");
-Serial.print(packed,BIN);
-Serial.println();
-delay(100);
-
-*/
 //delay(1000);
 //cast to long first so bits have room
  packed |= (long)b_1 << 24 ;
@@ -600,78 +593,73 @@ return((float)packed)/100.0f;
 
 void PiccoloLib::serialLoop() {
 
-    float xPosIn;
-    float yPosIn;
-    float zPosIn;
+
+/*
+Command Bytes 
+
+S   connect 
+B   received command (from piccolo)
+G   sending pos, the next 12 bytes are x,y,z packed down into 4 byte ints
+;   finished sending pos
+E   go home
+
+*/
+
     
     while (Serial.available() > 0) {
 
         inByte = Serial.read();
-        if(inByte == 'S') {
-            index = 0;
-            for (int i=0; i<25; i++) {
-                inString[i] = 0;
-            }
-            Serial.println('B');
-            delay(300);
-        }
-        else if(inByte == ';'  && index > 10) {
+
+        //Received end of position byte. 
+       if(waitingForPos && inByte == COMMAND_POS_END_BYTE  && index == 12 ) {
+            float xPosIn;
+            float yPosIn;
+            float zPosIn;
 
             xPosIn = calcFloat((byte)inString[3],(byte)inString[2],(byte)inString[1],(byte)inString[0]);
             yPosIn = calcFloat((byte)inString[7],(byte)inString[6],(byte)inString[5],(byte)inString[4]);
             zPosIn = calcFloat((byte)inString[11],(byte)inString[10],(byte)inString[9],(byte)inString[8]);
 
-            gotPos = true;
             index = 0;
+            waitingForPos =false;
+
+            vertex(xPosIn, yPosIn, zPosIn);
+            Serial.println(COMMAND_SEND_NEXT);
 
 
+        
         }
-        else if(inByte == 'E') {
+        //Received start of pos byte, wait for position bytes 
+        else if(inByte == COMMAND_POS_START_BYTE && !waitingForPos){
+        waitingForPos = true;
+        index = 0;
+        }
+
+        //received connect byte, reset bytes and notify host that we're ready to plot
+        else if(!waitingForPos && inByte == COMMAND_CONNECT) {
+            index = 0;
+            for (int i=0; i<25; i++) {
+                inString[i] = 0;
+            }
+            Serial.println(COMMAND_READY);
+            delay(300);
+            Serial.println(COMMAND_SEND_NEXT);
+            waitingForPos = false;
+            
+        }
+        //Go home
+        else if(inByte == COMMAND_END_STACK && !waitingForPos) {
             home();
         }
-        
+        //everything else
         else {
             inString[index] = inByte;
             index++;
         }
 
     }
-    
-    if (gotPos) {
-        vertex(xPosIn, yPosIn, zPosIn);
-        gotPos = false;
 
-        /*
-        Debug
-        delay(500);
-
-        Serial.print('x');
-        Serial.print(xPosIn,DEC);
-        Serial.print('y');
-        Serial.print(yPosIn,DEC);
-        Serial.print('z');
-        Serial.println(zPosIn,DEC);
-
-        delay(500);
-
-        for (int i=0; i<12; i++) {
-
-            Serial.print((byte)inString[i],BIN);
-            Serial.print('-');
-
-            inString[i] = 0;
-        }
-
-        Serial.println();
-
-        delay(500);
-        */
-        Serial.println('B');
-
-
-
-        //Serial.println(tmpPosStr);
-    }
+ 
     
 }
 

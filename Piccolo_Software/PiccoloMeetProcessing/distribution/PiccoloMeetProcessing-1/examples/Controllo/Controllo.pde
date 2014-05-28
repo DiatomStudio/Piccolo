@@ -9,13 +9,15 @@ Coordinates are centred around XYZ at 0,0,0.
 
 /*
 Notes:
-- Should we separate plotsiWriter to it's own library?
+- Should we separate plotsipiccolo. to it's own library?
 - Could Controllo be a example in this library?
 - Can we make seperate sketches / apps for generative drawings etc so that we can keep controllo clean and simple?
 - If so how would a exhibition setup work? webpage to launch diff apps.
 */
 
 //Libraries
+import piccoloMeetProcessing.*;
+
 import controlP5.*;
 import processing.serial.*;
 import java.awt.FileDialog;
@@ -38,13 +40,11 @@ float bedDepth = 50.0;
 float bedRenderWidth = 300;
 
 //current position of drawing command to send
-float xPos = 0;        
+float xPos = 0;          
 float yPos = 0;      
 float zPos = 0;  
 
-
 boolean fitSVGtoBed = true;
-
 
 //TODO: this should be removed or moved to make code more straight forward.
 //sensor sets
@@ -58,15 +58,14 @@ It might be a better idea to always load drawing shapes directly into the output
 canvas so that they always reflect what Piccolo is drawing. 
 */
 
-
 List path = new ArrayList();
 
-PlotsiWriter writer = new PlotsiWriter(bedWidth,bedHeight,bedDepth);
+Piccolo piccolo = new Piccolo(bedWidth,bedHeight,bedDepth);
 ControlP5 controlP5;
 CheckBox drawPlotsiOutput;
 Knob pressureKnob;
 
-PGraphics plotsiOutputCanvas;  //all lines drawn to this canvas will be sent to Piccolo
+PGraphics plotsiOutputCanvas; 
 
 
 
@@ -82,8 +81,8 @@ void setup() {
   plotsiOutputCanvas.endDraw();
 
   //canvas defaults
-  writer.setStepRes(1f);
-  writer.bezierDetail(20); 
+  piccolo.setStepRes(1f);
+  piccolo.bezierDetail(20); 
 
   //setup GUI
   controlP5 = new ControlP5(this);
@@ -104,11 +103,11 @@ void setup() {
   // List all the available serial ports
   //TODO: select serial port at this point. 
 try{
-  writer.serial = new Serial(this, s, 115200);
-  writer.serial.bufferUntil('\n');
-  serialConnected = true;
+  piccolo.serial = new Serial(this, s, 115200);
+  piccolo.serial.bufferUntil('\n');
+  piccolo.serialConnected = true;
 }catch(Exception e){
-  serialConnected = false;
+  piccolo.serialConnected = false;
 
 }
   
@@ -119,15 +118,7 @@ try{
   home();
 }
 
-
-
-
-
-
-
-
-
-
+//---------------------------- draw functions --------------------------------//
 
 void draw() {
 
@@ -151,17 +142,10 @@ void draw() {
   rect(-(bedRenderWidth/2),-(bedRenderWidth/2),bedRenderWidth,bedRenderWidth);
   popMatrix();
 
-  writer.draw(g,bedRenderWidth);
+  piccolo.draw(g,bedRenderWidth);
   popMatrix();
-  writer.serialLoop();
+  piccolo.serialLoop();
 }
-
-
-
-
-
-
-
 
 
 
@@ -176,19 +160,19 @@ void keyPressed(){
 
 
 public void penUp(int val) {
-  writer.clear(); 
-  writer.vertex(0 , 0, penLiftHeight);
-  writer.vertex(0, 0, penLiftHeight);
+  piccolo.clear(); 
+  piccolo.vertex(0 , 0, piccolo.getPenLiftHeight());
+  piccolo.vertex(0, 0, piccolo.getPenLiftHeight());
 
-  writer.establishContact();
+  piccolo.start();
 }
 
 public void penDown(int val) {
-  writer.clear(); 
-  writer.vertex(0, 0, 0);
-  writer.vertex(0, 0, 0);
+  piccolo.clear(); 
+  piccolo.vertex(0, 0, 0);
+  piccolo.vertex(0, 0, 0);
 
-  writer.establishContact();
+  piccolo.start();
 }
 
 
@@ -214,19 +198,19 @@ public void load_SVG(int val) {
     clearCanvas();
     PShape svg = loadShape(fd.getDirectory() + filename);
     svg.disableStyle();
-    writer.beginDraw();
-    writer.clear();
-    writer.pushMatrix();
+    piccolo.beginDraw();
+    piccolo.clear();
+    piccolo.pushMatrix();
 
     if(fitSVGtoBed)
-    writer.scale(bedWidth / max(svg.width,svg.height) );
+    piccolo.scale(bedWidth / max(svg.width,svg.height) );
     else
-    writer.scale(0.16666666666667);
+    piccolo.scale(0.16666666666667);
 
-    writer.translate(-(bedWidth/2.0),-(bedHeight/2.0),0.0);
-    writer.shape(svg,0,0);
-    writer.popMatrix();
-    writer.endDraw();
+    piccolo.translate(-(bedWidth/2.0),-(bedHeight/2.0),0.0);
+    piccolo.shape(svg,0,0);
+    piccolo.popMatrix();
+    piccolo.endDraw();
 
     //loadedSVG.scale(0.6); 
     //
@@ -244,52 +228,57 @@ void clearCanvas() {
   plotsiOutputCanvas.beginDraw();
   plotsiOutputCanvas.smooth();
   //plotsiOutputCanvas.background(255);
-  plotsiOutputCanvas.endDraw();
+  plotsiOutputCanvas.endDraw();  
   loadedSVG = null;
 }
 
-
+/*
 
 void up_() {
-  penDownHeight+=5;
-  penLiftHeight = penDownHeight+40;
-  writer.clear();
-  writer.stepTo(0, 0, penDownHeight);
-  writer.establishContact();
+  piccolo.penDownHeight+=5;
+  piccolo.penLiftHeight = piccolo.penDownHeight+40;
+  piccolo.clear();
+  piccolo.stepTo(0, 0, piccolo.penDownHeight);
+  piccolo.establishContact();
   clearCanvas();
 }
 
 void down_() {
-  penDownHeight-=5;
-  println(penDownHeight);
-  penLiftHeight = penDownHeight+40;
-  writer.clear();
-  writer.stepTo(0, 0, penDownHeight);
-  writer.establishContact();
+  piccolo.penDownHeight-=5;
+  println(piccolo.penDownHeight);
+  piccolo.penLiftHeight = piccolo.penDownHeight+40;
+  piccolo.clear();
+  piccolo.stepTo(0, 0, piccolo.penDownHeight);
+  piccolo.establishContact();
   clearCanvas();
 }
-
+*/
 void home() {
-  writer.clear();
-  writer.stepTo(0, 0, penLiftHeight);
-  writer.establishContact();
+  piccolo.clear();
+  piccolo.stepTo(0, 0, piccolo.getPenLiftHeight());
+  piccolo.start();
  // clearCanvas();
+}
+
+  
+public void start(int val) {
+  piccolo.start();
 }
 
 
 void stop(){
- writer.clear();
+ piccolo.clear();
 }
 
 
 public void Up(int val) {
   println("Up");
-  writer.clear();
-  writer.establishContact();
+  piccolo.clear();
+  piccolo.start();
   if (zPos<90)
   {
     zPos+=10;
-    writer.stepTo(xPos, yPos, zPos);
+    piccolo.stepTo(xPos, yPos, zPos);
   }
   print("myZ:");
   println(xPos);
@@ -298,12 +287,12 @@ public void Up(int val) {
 }
 
 public void Down(int val) {
-  writer.clear();
-  writer.establishContact();
+  piccolo.clear();
+  piccolo.start();
   if (zPos>10)
   {
     zPos-=10;
-    writer.stepTo(xPos, yPos, zPos);
+    piccolo.stepTo(xPos, yPos, zPos);
   }
   print("myZ:");
   println(xPos);
@@ -315,58 +304,41 @@ public void Down(int val) {
 
 // =========================================================== //
 
-public void TicTacToe() {
-  writer.clear();
-  clearCanvas();
-  drawGrid(writer);
-}
-
-public void generate_tree() {
-  writer.clear();
-  clearCanvas();
-  generatePlant( lightLevel, writer);
-}
-
-public void generate_mustache() {
-  writer.clear();
-  clearCanvas();
-  drawMustache(writer);
-}
 
 public void logo(int val) {
-  writer.clear();
+  piccolo.clear();
   clearCanvas();
   loadedSVG = loadShape("logo.svg");
 }
 
 public void circles() {
-  writer.clear();
+  piccolo.clear();
   clearCanvas();
-  drawCircles(writer);
+  drawCircles(piccolo);
 }
 
 public void boxes() {
-  writer.clear();
+  piccolo.clear();
   clearCanvas();
-  drawBoxes(writer);
+  drawBoxes(piccolo);
 }
 
 public void diagonals() {
-  writer.clear();
+  piccolo.clear();
   clearCanvas();
-  drawDiagonals(writer);
+  drawDiagonals(piccolo);
 }
 
 public void word() {
-  writer.clear();
+  piccolo.clear();
   clearCanvas();
-  drawWord(writer);
+  drawWord(piccolo);
 }
 
 public void bezier(){
-  writer.clear();
+  piccolo.clear();
   clearCanvas();
-  drawBezier(writer);
+  drawBezier(piccolo);
 
 }
 

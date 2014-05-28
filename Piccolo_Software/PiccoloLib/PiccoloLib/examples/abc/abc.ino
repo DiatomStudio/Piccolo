@@ -20,7 +20,7 @@ void setup(){
 }
 
 void loop(){
-  if(!btnOneDown && piccolo.btnOneDown()){
+  if(!btnOneDown && piccolo.buttonOneDown()){
 
     if(charNum == 0)
       drawA();
