@@ -10,11 +10,13 @@ PVector c1 = new PVector(25,-25,0);
 PVector c2 = new PVector(25,-25,0);
 
 
-for(int i = 0; i < 25; i+=2){
+for(int i = 25; i > -25 ; i-=2){
   c1.x = i; c1.y = -i;
   c2.x = i; c2.y = -i;
   g.bezier(p1.x, p1.y,c1.x,c1.y,c2.x,c2.y, p2.x, p2.y);
 }
+
+
 
 }
 void drawCircles(PGraphics g) {
@@ -130,13 +132,16 @@ void drawWord(PGraphics g) {
   //RG.setPolygonizerStep(15);
 
   RG.setPolygonizer(RG.UNIFORMLENGTH);
-  RG.setPolygonizerLength(4);
+  RG.setPolygonizerLength(0.3f);
   
   points1 = grp1.getPoints();
   points2 = grp2.getPoints();
   points3 = grp3.getPoints();  
   points4 = grp4.getPoints();
   
+  g.pushMatrix();
+    g.translate(-10,-10);
+  g.scale(0.1);
   g.beginShape();
   for(int i=1; i<points1.length; i++) {
     g.vertex(points1[i].x+o-fontHeight,points1[i].y+o);
@@ -160,6 +165,7 @@ void drawWord(PGraphics g) {
     g.vertex(points4[i].x+o+fontHeight,points4[i].y+o);
   }
   g.endShape();
+  g.popMatrix();
   
   
   

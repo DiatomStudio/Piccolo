@@ -74,6 +74,8 @@ public class Piccolo extends PGraphics {
 	  public boolean flipZ = false;
 	  public boolean rotateBed = false;
 
+	  
+	  public boolean startButtonPressed = false;
 
 
 	//debug output all serial communications to the console for debugging. 
@@ -414,7 +416,7 @@ public
       }
 
 
-      x = parent.constrain(x,-(bedWidth/2.0f),bedWidth/2.0f);
+      x = parent.constrain(x,-bedWidth/2.0f,bedWidth/2.0f);
       y = parent.constrain(y,-bedHeight/2.0f,bedHeight/2.0f);
       z = parent.constrain(z,-bedDepth/2.0f,bedDepth/2.0f);
 
@@ -559,7 +561,8 @@ if(debugDraw)
     }
 
     if(inString.startsWith("start")){
-    	start();//start
+    	startButtonPressed = true;
+    	//start();//start
      }
 
 if(inString.startsWith("setZ")){

@@ -10,6 +10,10 @@ class Face {
    
    */
   
+  
+  float bedWidth    =   50; 
+  float bedHeight   =   50;
+  
   int BOY = 1;
   int GIRL = 0;
   int geneder = 0;
@@ -17,9 +21,11 @@ class Face {
 
   static final int BALD = 0;
   static final int PIGTAILS = 1; 
-
+  static final int SHORT = 2; 
+  static final int LONG = 3;
+  
   float age = 10; //
-  float hairLength = 1; // in pixels. 
+  float hairLength = 15; // in pixels. 
   public int hairStyle = PIGTAILS;
 
   boolean eyesOpen = true; 
@@ -61,6 +67,8 @@ class Face {
 
 
 
+    if(hairStyle == LONG)
+    drawHairBack(g);
     //Head
     //drawHead(g);
     drawChin(g);
@@ -268,52 +276,90 @@ Chage to draw chin, heads look bald :P
     //crown left to right
     g.vertex(-headWidth/2.0f, -fringeHeight); // start
     g.bezierVertex(-headWidth/2.0f, -fringeHeight, -headControlTop, -headHeight/2, 0, -headHeight/2);
-    g.bezierVertex(headControlTop, -headHeight/2, headWidth/2.0f, -fringeHeight, headWidth/2.0f, -fringeHeight);
-    
+    g.bezierVertex(headControlTop, -headHeight/2, headWidth/2.0f, -fringeHeight, headWidth/2.0f, -fringeHeight);    
     
     //Fringe
     g.bezierVertex(headWidth/2.0f, -fringeHeight, 0, -fringeHeight+3, 0, -fringeHeight);
     g.bezierVertex(0, -fringeHeight+3, -headWidth/2.0f, -fringeHeight-3, -headWidth/2.0f, -fringeHeight);
 
     g.endShape();
-    
-    
+
     
     float x = bezierPoint(-headWidth/2.0f,  -headWidth/2.0f,-headControlTop, 0, 0.5f);
     float y = bezierPoint(-fringeHeight, -fringeHeight, -headHeight/2.0f, -headHeight/2.0f, 0.5f);
 
 
 
+    //pigtail left 
     g.beginShape();
     g.vertex(x, y); // start
     g.bezierVertex(x-15, y-30, -25, -10,  -headWidth/2.0f -10, -fringeHeight);
     g.bezierVertex(-headWidth/2.0f -10, -fringeHeight, -25, -20 ,x,y);
-
     g.endShape();
-
+    
+    //pigtail right
+    g.beginShape();
+    g.vertex(-x, y); // start
+    g.bezierVertex(-x+15, y-30, 25, -10,  headWidth/2.0f +10, -fringeHeight);
+    g.bezierVertex(headWidth/2.0f +10, -fringeHeight, 25, -20 ,-x,y);
+    g.endShape();
+    
+    
+ 
 
     float bobsDia = 7;
     //left
     g.ellipse(x- (bobsDia/3.0f), y - (bobsDia/3.0f),bobsDia,bobsDia);   
    g.ellipse(-x+ (bobsDia/3.0f), y - (bobsDia/3.0f),bobsDia,bobsDia);   
 
-    //Back 
-    }else if(hairStyle == BALD){
-          g.beginShape();
+    }
+    
+   if( hairStyle == BALD){
+
+         g.beginShape();
     
     //crown left to right
     g.vertex(-headWidth/2.0f, -fringeHeight); // start
     g.bezierVertex(-headWidth/2.0f, -fringeHeight, -headControlTop, -headHeight/2, 0, -headHeight/2);
-    g.bezierVertex(headControlTop, -headHeight/2, headWidth/2.0f, -fringeHeight, headWidth/2.0f, -fringeHeight);
-    
-    
+    g.bezierVertex(headControlTop, -headHeight/2, headWidth/2.0f, -fringeHeight, headWidth/2.0f, -fringeHeight);    
     g.endShape();
+    //Back 
+    } 
+    
+    
+    if (hairStyle == SHORT || hairStyle == LONG){
+         g.beginShape();
+    
+    //crown left to right
+    g.vertex(-headWidth/2.0f, -fringeHeight); // start
+    g.bezierVertex(-headWidth/2.0f, -fringeHeight, -headControlTop, -headHeight/2, 0, -headHeight/2);
+    g.bezierVertex(headControlTop, -headHeight/2, headWidth/2.0f, -fringeHeight, headWidth/2.0f, -fringeHeight);    
+    
+    //Fringe
+    g.bezierVertex(headWidth/2.0f, -fringeHeight, 0, -fringeHeight+3, 0, -fringeHeight);
+    g.bezierVertex(0, -fringeHeight+3, -headWidth/2.0f, -fringeHeight-3, -headWidth/2.0f, -fringeHeight);
+
+    g.endShape(); 
       
     }
     
   }
   
-  
+  /*================================ draw hair================================*/
+
+  void drawHairBack(PGraphics g) {
+     if (hairStyle == LONG){
+         g.beginShape();
+             g.vertex(-headWidth/2.0f, -fringeHeight); // start
+             g.vertex(headWidth/2.0f, -fringeHeight); // start
+             g.vertex(headWidth/2.0f, hairLength); // start
+             g.vertex(-headWidth/2.0f, hairLength); // start
+             g.vertex(-headWidth/2.0f, -fringeHeight); // start
+         g.endShape();
+
+
+     }
+  }
   
 
 /*================================ draw mouth ================================*/
@@ -381,6 +427,38 @@ Chage to draw chin, heads look bald :P
     
     
     
+  }
+  
+  
+  
+  void randomFace(){
+    
+  hairLength = random(0,25); // in pixels. 
+  hairStyle = (int)random(0,4);
+
+   eyesOpen = ((int)random(0,2) == 1) ? true : false;
+   eyeWidth = random(1,10);
+   eyeHeight = random(1,10);
+  
+   hasGlasses = ((int)random(0,2) == 1) ? true : false;
+
+  //nose
+   noseHeight = random(2,7);
+   noseWidth = random(2,7);
+   
+  //mouth
+   mouthWidth = random(2.0,20.0);; 
+   smileHeight = random(-2.0,7.0); 
+   mouthOpen = random(0.0,7.0);
+
+
+  headHeight = random(17,50);
+  headWidth = random(10,50);
+ 
+ 
+
+  
+  
   }
 }
 

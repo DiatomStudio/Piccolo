@@ -33,10 +33,6 @@ boolean view3D = false; // display view in 3D
 float bedWidth = 50.0; 
 float bedHeight = 50.0; 
 float bedDepth = 50.0; 
-
-
-
-
 float bedRenderWidth = 300;
 
 //current position of drawing command to send
@@ -45,6 +41,8 @@ float yPos = 0;
 float zPos = 0;  
 
 boolean fitSVGtoBed = true;
+
+public boolean drawTool = false;
 
 //TODO: this should be removed or moved to make code more straight forward.
 //sensor sets
@@ -83,6 +81,7 @@ void setup() {
   //canvas defaults
   piccolo.setStepRes(1f);
   piccolo.bezierDetail(20); 
+  piccolo.rotate(PI/2.0f);
 
   //setup GUI
   controlP5 = new ControlP5(this);
@@ -122,6 +121,7 @@ try{
 
 void draw() {
 
+  
   background(255, 255, 255);
   ortho(0, width, 0, height); // same as ortho()
   pushMatrix();
@@ -142,9 +142,36 @@ void draw() {
   rect(-(bedRenderWidth/2),-(bedRenderWidth/2),bedRenderWidth,bedRenderWidth);
   popMatrix();
 
+  rotate(-PI/2.0f);
   piccolo.draw(g,bedRenderWidth);
   popMatrix();
-  piccolo.serialLoop();
+  piccolo.update();
+}
+
+
+
+void mousePressed(){
+  if(drawTool && mouseX > 150 && mouseX < 450 && mouseY > 20 && mouseY < 320){
+    piccolo.beginShape();
+  }
+}
+
+
+void mouseDragged(){
+  if(drawTool && mouseX > 150 && mouseX < 450 && mouseY > 20 && mouseY < 320){
+    
+      float posX = (((mouseX - 150)/bedRenderWidth) * piccolo.bedWidth) - piccolo.bedWidth/2.0f;
+     float posY = (((mouseY - 20)/bedRenderWidth)*piccolo.bedHeight) - piccolo.bedHeight/2.0f;
+
+
+    piccolo.vertex(posX,posY);
+  }
+}
+
+void mouseReleased(){
+    if(drawTool){
+    piccolo.endShape();
+    }
 }
 
 
@@ -202,12 +229,17 @@ public void load_SVG(int val) {
     piccolo.clear();
     piccolo.pushMatrix();
 
-    if(fitSVGtoBed)
-    piccolo.scale(bedWidth / max(svg.width,svg.height) );
-    else
-    piccolo.scale(0.16666666666667);
+    float scaleSVG;
 
-    piccolo.translate(-(bedWidth/2.0),-(bedHeight/2.0),0.0);
+    if(fitSVGtoBed)
+     scaleSVG = bedWidth / max(svg.width,svg.height);
+    else
+    scaleSVG = 0.16666666666667;
+    
+        piccolo.translate(-(piccolo.bedWidth/2.0),-(piccolo.bedHeight/2.0),0.0);
+
+    piccolo.scale(scaleSVG);
+
     piccolo.shape(svg,0,0);
     piccolo.popMatrix();
     piccolo.endDraw();
@@ -306,9 +338,29 @@ public void Down(int val) {
 
 
 public void logo(int val) {
-  piccolo.clear();
-  clearCanvas();
-  loadedSVG = loadShape("logo.svg");
+
+    PShape svg = loadShape("logo.svg");
+    svg.disableStyle();
+    piccolo.beginDraw();
+    piccolo.clear();
+    piccolo.pushMatrix();
+
+    float scaleSVG;
+
+    if(fitSVGtoBed)
+     scaleSVG = bedWidth / max(svg.width,svg.height);
+    else
+    scaleSVG = 0.16666666666667;
+    
+        piccolo.translate(-(piccolo.bedWidth/2.0),-(piccolo.bedHeight/2.0),0.0);
+
+    piccolo.scale(scaleSVG);
+
+    piccolo.shape(svg,0,0);
+    piccolo.popMatrix();
+    piccolo.endDraw();
+    
+    
 }
 
 public void circles() {

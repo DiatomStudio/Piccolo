@@ -1,14 +1,13 @@
 import controlP5.*;
 import piccoloMeetProcessing.*;
 
+
 ControlP5 cp5;
 
 import processing.serial.*;
 import java.awt.FileDialog;
 import java.util.*;
 import javax.swing.JOptionPane;
-
-
 
 
 float drawHeight = 50; 
@@ -21,7 +20,8 @@ float bedDepth = 50.0;
 
 
 PGraphics occlusionCanvas = null;;
-
+ControlFrame cf;
+CaptureFrame captureFrame = null;
 
 
 
@@ -34,10 +34,8 @@ void setup(){
   size(300,300);
   cp5 = new ControlP5(this);
   
-  
-    cp5.addButton("startSend")
-    .setPosition(width-35,height-19)
-     .setSize(35,19);
+
+     
 
 
 
@@ -68,7 +66,30 @@ try{
 piccolo.rotate(PI/2);
 
 
-setupGUI();
+
+
+
+
+  Frame f = new Frame("capture");
+  CaptureFrame p = new CaptureFrame(this, 320, 240);
+  f.add(p);
+  p.init();
+  f.setTitle("capture");
+  f.setSize(p.w, p.h);
+  f.setLocation(500, 100);
+  f.setResizable(true);
+  f.setVisible(true);
+  captureFrame = p;
+  
+  
+  
+  
+cf = addControlFrame("extra", 340,640);
+
+
+
+
+  
 
 }
 
@@ -80,7 +101,7 @@ void draw(){
   piccolo.update();
   
   
-  background(200);
+  background(255);
   
   
   //grid
@@ -104,13 +125,18 @@ void draw(){
   face.draw(g);
   
   
-  if(keyPressed && key =='d'){
-    stroke(255,0,0);
+ if(keyPressed && key =='d'){
+   pushMatrix();
+   rotate(-PI/2);
+    g.stroke(255,0,0);
   piccolo.drawCodeStack(g);
+  popMatrix();
   
   }
   popMatrix();
   
+  
+
   
  // if(occlusionCanvas != null)
   //image(occlusionCanvas,0,0);
@@ -120,7 +146,8 @@ void draw(){
    if(key == 'm'){
     
   }}
-
+  
+ 
 }
 
 void keyPressed(){
@@ -160,44 +187,21 @@ void startSend(){
     occlusionCanvas.endDraw();
     
     face.draw(piccolo);
-   // piccolo.removeOcclusions(occlusionCanvas);
+    piccolo.removeOcclusions(occlusionCanvas);
     
     piccolo.start();
 }
 
 
-void setupGUI(){
-  
-
-  float posX = 10;
-  float posY = 10;
-    // create a toggle
-  cp5.addToggle("gender")
-     .setPosition(posX,posY)
-     .setSize(10,10)
-     .plugTo(face,"gender")
-     ;
-     posY+=30;
-     
-  cp5.addSlider("headHeight")
-     .setPosition(posX,posY)
-     .setRange(2,50)
-     .setValue(face.headHeight)
-     .plugTo(face,"headHeight")
-     .setLabelVisible(true)
-     ;
-      posY+=10;
-      
-     
-    cp5.addSlider("headWidth")
-     .setPosition(posX,posY)
-     .setRange(2,50)
-      .setValue(face.headWidth)
-     .plugTo(face,"headWidth")
-     ;
-      posY+=10;
-     
-     
-     
+ControlFrame addControlFrame(String theName, int theWidth, int theHeight) {
+  Frame f = new Frame(theName);
+  ControlFrame p = new ControlFrame(this, theWidth, theHeight);
+  f.add(p);
+  p.init();
+  f.setTitle(theName);
+  f.setSize(p.w, p.h);
+  f.setLocation(100, 100);
+  f.setResizable(true);
+  f.setVisible(true);
+  return p;
 }
-

@@ -2,11 +2,27 @@
 void drawInterface() {
 
   drawPlotsiOutput = controlP5.addCheckBox("draw output", 100, 100);  
-  controlP5.addButton("load_SVG", 0, 10, 10, 80, 19);
-  controlP5.addSlider("lightLevel", 0, 1.0f, 0.5f, 10, 33, 80, 10);
-  controlP5.addButton("generate_tree", 0, 10, 50, 80, 19);
-  controlP5.addButton("generate_mustache", 0, 10, 70, 80, 19);
-  //  controlP5.addButton("brush_Mustache", 0, 10, 120, 80, 19);
+  
+    controlP5.addToggle("draw")
+     .setPosition(10,10)
+     .setSize(80,19)
+     .plugTo(this,"drawTool")
+     ;
+   
+     controlP5.addTextlabel("DRAW")
+     .setText("DRAW")
+     .setPosition(10,14);
+
+
+
+  controlP5.addButton("load_SVG", 0, 10, 30, 80, 19);
+  
+
+
+     
+     
+     
+     //  controlP5.addButton("brush_Mustache", 0, 10, 120, 80, 19);
   controlP5.addButton("bezier", 0, 10, 90, 80, 19);  
   controlP5.addButton("logo", 0, 10, 110, 80, 19);
   //  controlP5.addButton("maze", 0, 10, 180, 80, 19);
@@ -15,6 +31,7 @@ void drawInterface() {
   controlP5.addButton("diagonals", 0, 10, 170, 80, 19);
   controlP5.addButton("word", 0, 10, 190, 80, 19);
 
+/*
   pressureKnob = controlP5.addKnob("pressure")
     .setRange(0, bedDepth)
       .setValue(piccolo.getPenDownHeight())
@@ -25,7 +42,7 @@ void drawInterface() {
                 ;
   controlP5.addButton("up_", 0, 50, 223, 30, 10);
   controlP5.addButton("down_", 0, 50, 237, 30, 10);
-
+*/
   //  controlP5.addButton("w",0, 30, 220, 19, 19);
   //  controlP5.addButton("s",0, 30, 240, 19, 19);
   //  controlP5.addButton("a",0, 10, 230, 19, 19);

@@ -30,6 +30,9 @@ Piccolo piccolo = new Piccolo(bedWidth,bedHeight,bedDepth);
 
 
 
+boolean startPlot = false;
+
+
 void setup(){
   size(300,300);
   cp5 = new ControlP5(this);
@@ -96,9 +99,17 @@ cf = addControlFrame("extra", 340,640);
 
 
 void draw(){
-  
-  
+
   piccolo.update();
+  
+  
+  
+  if(piccolo.startButtonPressed){
+  face.randomFace();
+  piccolo.startButtonPressed = false; 
+  
+  startPlot = true;
+  }
   
   
   background(255);
@@ -148,6 +159,12 @@ void draw(){
   }}
   
  
+ 
+ if( startPlot){
+   startPlot = false;
+ startSend();
+ }
+
 }
 
 void keyPressed(){

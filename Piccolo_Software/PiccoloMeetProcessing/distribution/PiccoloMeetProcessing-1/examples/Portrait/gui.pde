@@ -125,7 +125,7 @@ public class ControlFrame extends PApplet {
         d1.addItem("BALD", Face.BALD);
         d1.addItem("PIGTAILS", Face.PIGTAILS);
         d1.addItem("SHORT", Face.SHORT);
-        d1.addItem("LONG", Face.LONG);
+
 
     //____________________mouth
 
@@ -305,7 +305,7 @@ public class ControlFrame extends PApplet {
      
      
               cp5.addButton("randomFace")
-    .setPosition(120,height-60)
+    .setPosition(110,height-60)
         .plugTo(face,"randomFace")
      .setSize(100,30);
      
