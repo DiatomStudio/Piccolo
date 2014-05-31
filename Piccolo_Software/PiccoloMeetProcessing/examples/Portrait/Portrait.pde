@@ -66,7 +66,7 @@ try{
 
 }
 
-piccolo.rotate(PI/2);
+piccolo.rotate(PI + (PI/2));
 
 
 
@@ -197,7 +197,7 @@ void startSend(){
     occlusionCanvas.background(255);
     occlusionCanvas.pushMatrix();
     occlusionCanvas.translate(occlusionCanvas.width/2.0f, occlusionCanvas.height/2.0f);
-    occlusionCanvas.rotate(PI/2);    
+    occlusionCanvas.rotate(PI + (PI/2));    
     occlusionCanvas.scale( occlusionCanvas.width/piccolo.bedWidth);
     face.draw(occlusionCanvas);
     occlusionCanvas.popMatrix();
