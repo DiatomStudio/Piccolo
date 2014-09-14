@@ -17,8 +17,6 @@ Taken from spiral example in examples folder.
 #include <Servo.h> //Needed in Piccolo Lib
 #include <PiccoloLib.h> //include the Piccolo Lib
 
-float maxR = PICCOLO_BED_WIDTH / 2; //Spiral radius, reach to end of Piccolo draw area. 
-float minR = 1; //Min spiral radius. 
 
 PiccoloLib piccolo; //Make a instance of the Piccolo library for controlling Piccolo
 
@@ -35,7 +33,9 @@ delay(2000); //Wait 2 seconds before stating the loop again
 
 void drawSpiral(){
   
-  	float spacing = maxR/20; //Distance between loops.  	
+  	float spacing = piccolo.getBedWidth()/20; //Distance between loops.  	float maxR = piccolo.getBedWidth();
+  	float minR = 10.0f;
+  	
     piccolo.beginShape();
     for(float r = maxR; r > minR; r -= spacing) {
     for(float a=TWO_PI; a>0; a-= 0.01) {    
