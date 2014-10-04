@@ -1,4 +1,14 @@
-//Notes: Swap x-y servo leads. 
+/*
+ LightGraph - PiccoloLib Example.
+ Piccolo.cc
+ Created by Diatom Studio, October 10, 2013.
+ Released into the public domain.
+
+ Piccolo draws a graph of light level read by a light dependent resistor attached to Piccolo. 
+ 
+
+*/
+
 #include <Servo.h> //Needed in Piccolo Lib
 #include <PiccoloLib.h> //include the Piccolo Lib
 
@@ -21,7 +31,7 @@ piccolo.vertex(0,50,25);
 void loop(){
   
     //Use the Piccolo thumbwheel to set the Z draw height for piccolo and relay this over the serial
-  float val = piccolo.getThumbwheelVal();
+  float val = piccolo.readThumbwheel();
   float deltaVal = abs(prevThumbWheelVal-val);
   if( deltaVal > 30 || (millis() - lastThumbChange < 1000 && deltaVal > 5)){
     
