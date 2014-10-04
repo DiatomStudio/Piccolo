@@ -1,13 +1,16 @@
 #include <Servo.h> //Needed in Piccolo Lib
 #include <PiccoloLib.h> //include the Piccolo Lib
 
-//Note: Swap X and Y servo leads.
-
 boolean btnOneDown;
+
 PiccoloLib piccolo; //Make a instance of the Piccolo library for controlling Piccolo
+
 unsigned long lastThumbChange;
+
 float prevThumbWheelVal; 
 
+float THUMB_ACTIVATE_THRESHHOLD = 30.0f;
+float THUMB_CHANGE_THRESHHOLD = 5.0f;
 
 int charNum ;
 
@@ -39,23 +42,19 @@ void loop(){
 
 
 
+   //Use the Piccolo thumbwheel to set the Z draw height for piccolo and relay this over the serial
+   float val = piccolo.readThumbwheel();
+   float deltaVal = abs(prevThumbWheelVal-val);
 
-  //Use the Piccolo thumbwheel to set the Z draw height for piccolo and relay this over the serial
-  float val = piccolo.getThumbwheelVal();
-  float deltaVal = abs(prevThumbWheelVal-val);
-  if( deltaVal > 30 || (millis() - lastThumbChange < 1000 && deltaVal > 5)){
+   if( deltaVal > THUMB_ACTIVATE_THRESHHOLD || (millis() - lastThumbChange < 1000 && deltaVal > THUMB_CHANGE_THRESHHOLD)){
+     lastThumbChange  = millis();
+     prevThumbWheelVal = val;
+     float zVal = ((piccolo.Z.getBedSize()/1024.0)*val)-(piccolo.Z.getBedSize()/2.0);
+     piccolo.move(piccolo.X.getPos(), piccolo.Y.getPos(),zVal);
+     piccolo.setPenDownPos(zVal);
 
-    lastThumbChange  = millis();
-    prevThumbWheelVal = val;
-    float zVal = (piccolo.getBedDepth()/1024.0)*val;
-    piccolo.move(piccolo.getX(), piccolo.getY(),zVal);
-    piccolo.setPenDownPos(zVal);
-    piccolo.invertAxis(true,false,false);
-  }
-
-
-
-
+   }
+   
 
 }
 
@@ -64,14 +63,13 @@ void drawA(){
 
   piccolo.beginShape();
   piccolo.vertex(0,0);
-  piccolo.vertex((piccolo.getBedWidth()/2.0f),piccolo.getBedHeight());
-  piccolo.vertex(piccolo.getBedWidth(),0);
+  piccolo.vertex((piccolo.X.getBedSize()/2.0f),piccolo.Y.getBedSize());
+  piccolo.vertex(piccolo.X.getBedSize(),0);
   piccolo.endShape();
 
-
   piccolo.beginShape();
-  piccolo.vertex(piccolo.getBedWidth()*0.1,piccolo.getBedHeight()*0.5);
-  piccolo.vertex(piccolo.getBedWidth()*0.9,piccolo.getBedHeight()*0.5);
+  piccolo.vertex(piccolo.X.getBedSize()*0.1,piccolo.Y.getBedSize()*0.5);
+  piccolo.vertex(piccolo.X.getBedSize()*0.9,piccolo.Y.getBedSize()*0.5);
   piccolo.endShape();
 
 }
@@ -81,53 +79,29 @@ void drawA(){
 void drawB(){
   float startX = 10;
   piccolo.beginShape();
-  piccolo.vertex(startX,piccolo.getBedHeight());
+  piccolo.vertex(startX,piccolo.Y.getBedSize());
   piccolo.vertex(startX,0);
   piccolo.endShape();
 
-
   piccolo.beginShape();
-  piccolo.vertex(startX,piccolo.getBedHeight());
-  piccolo.vertex(piccolo.getBedWidth(),piccolo.getBedHeight());
-  piccolo.vertex(piccolo.getBedWidth(),piccolo.getBedHeight()*0.5);
-  piccolo.vertex(startX,piccolo.getBedHeight()*0.5);
-  piccolo.vertex(piccolo.getBedWidth(),piccolo.getBedHeight()*0.5);
-  piccolo.vertex(piccolo.getBedWidth(),0);
+  piccolo.vertex(startX,piccolo.Y.getBedSize());
+  piccolo.vertex(piccolo.X.getBedSize(),piccolo.Y.getBedSize());
+  piccolo.vertex(piccolo.X.getBedSize(),piccolo.Y.getBedSize()*0.5);
+  piccolo.vertex(startX,piccolo.Y.getBedSize()*0.5);
+  piccolo.vertex(piccolo.X.getBedSize(),piccolo.Y.getBedSize()*0.5);
+  piccolo.vertex(piccolo.X.getBedSize(),0);
   piccolo.vertex(0,0);
   piccolo.endShape();
-
-
-  //Circles
-  /*
-  piccolo.beginShape();
-   piccolo.arc(startX,piccolo.getBedHeight()*0.75,piccolo.getBedHeight()*0.50,piccolo.getBedHeight()*0.25,0,PI);
-   piccolo.endShape();
-   
-   piccolo.beginShape();
-   piccolo.arc(startX,piccolo.getBedHeight()*0.25,piccolo.getBedHeight()*0.50,piccolo.getBedHeight()*0.25,0,PI);
-   piccolo.endShape();
-   
-   */
-
 }
-
-
 
 void drawC(){
 
   piccolo.beginShape();
-  piccolo.vertex(piccolo.getBedWidth(),piccolo.getBedHeight());
-  piccolo.vertex(0,piccolo.getBedHeight());
+  piccolo.vertex(piccolo.X.getBedSize(),piccolo.Y.getBedSize());
+  piccolo.vertex(0,piccolo.Y.getBedSize());
   piccolo.vertex(0,0);
-  piccolo.vertex(piccolo.getBedWidth(),0);
+  piccolo.vertex(piccolo.X.getBedSize(),0);
 
   piccolo.endShape();
-  /*
-  piccolo.beginShape();
-   piccolo.arc(piccolo.getBedWidth()*0.5,piccolo.getBedHeight()*0.5,piccolo.getBedHeight()*0.5,piccolo.getBedHeight()*0.5,0,TWO_PI*0.75);
-   piccolo.endShape();
-   
-   */
-
 }
 
