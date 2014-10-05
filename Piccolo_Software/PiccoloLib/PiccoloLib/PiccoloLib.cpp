@@ -26,7 +26,7 @@ void PiccoloLib::setup(int xPin, int yPin, int zPin){
     
     beginDrawFlag = false;
     drawing = false;
-    thumbwheelZcontrol = false;
+    //thumbwheelZcontrol = false;
     serialStream = false;
     disableMotion = false;
     
@@ -515,7 +515,7 @@ void PiccoloLib::bezier(float x1, float y1, float cx1, float cy1, float cx2, flo
     }
 }
 
-void Piccolo::bezierYZ(float y1, float z1, float cy1, float cz1, float cy2, float cz2, float y2, float z2){
+void PiccoloLib::bezierYZ(float y1, float z1, float cy1, float cz1, float cy2, float cz2, float y2, float z2){
     float len = 0;
     float py = y1;
     float pz = z1;

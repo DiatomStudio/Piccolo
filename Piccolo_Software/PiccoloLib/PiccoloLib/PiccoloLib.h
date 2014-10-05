@@ -192,10 +192,10 @@ public:
     void home();
 
     //tentative
-    boolean thumbwheelZcontrol;
     void thumbwheelControlX();
     void thumbwheelControlY();
     void thumbwheelControlZ();
+    //boolean thumbwheelZcontrol;
 
     void setPenDownPos(float _penDownPos);
     float getPenDownPos();
