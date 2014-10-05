@@ -192,8 +192,6 @@ void PiccoloAxis::setBedSize(float newSize){
 void PiccoloAxis::move(float _pos){
     int uStarget;
 
-
-
     if(inverted) {
         uStarget = uScenter - _pos * uSmm;
     } else {
@@ -284,8 +282,6 @@ void PiccoloLib::move(float x, float y){
 
 void PiccoloLib::move(float x, float y, float z){
 
-
-
     if (serialStream) {
         Serial.print("x:");
         Serial.print(x);
@@ -297,14 +293,11 @@ void PiccoloLib::move(float x, float y, float z){
         delay(10);
     }
 
-
     if (!disableMotion) {
         X.move(x);
         Y.move(y);
         Z.move(z);
     }
-
-
 
 }
 
@@ -313,35 +306,34 @@ void PiccoloLib::setDrawOrientation(int _orientation){
      drawOrientation = _orientation;
 
 
-switch(_orientation){
-    case ORIENTATION_LEFT: // Invert Y
-    X.setup(SERVO_X_PIN);
-    Y.setup(SERVO_Y_PIN);
-    Z.setup(SERVO_Z_PIN);
-    //default orientation 
-    break;
+    switch(_orientation){
+        
+        case ORIENTATION_LEFT: //default orientation 
+        X.setup(SERVO_X_PIN);
+        Y.setup(SERVO_Y_PIN);
+        Z.setup(SERVO_Z_PIN);
+        break;
 
-    case ORIENTATION_TOP: // 90 degrees swap X and Y Axis
+        case ORIENTATION_TOP: // swap X & Y axes
+        X.setup(SERVO_Y_PIN);
+        Y.setup(SERVO_X_PIN);
+        Z.setup(SERVO_Z_PIN);
+        break;
 
-    X.setup(SERVO_Y_PIN); // swap X & Y axis
-    Y.setup(SERVO_X_PIN);
-    Z.setup(SERVO_Z_PIN);
-    break;
+        case ORIENTATION_RIGHT: // invert Y axis
+        X.setup(SERVO_X_PIN);
+        Y.setup(SERVO_Y_PIN);
+        Z.setup(SERVO_Z_PIN);
+        Y.invert(true);
+        break;
 
-    case ORIENTATION_RIGHT: // Invert Y
-    X.setup(SERVO_X_PIN);
-    Y.setup(SERVO_Y_PIN);
-    Z.setup(SERVO_Z_PIN);
-    Y.invert(true);
-    break;
-
-    case ORIENTATION_BOTTOM:
-    X.setup(SERVO_Y_PIN); // swap X & Y axis
-    Y.setup(SERVO_X_PIN);
-    Z.setup(SERVO_Z_PIN);
-    Y.invert(true);
-    break;
-}
+        case ORIENTATION_BOTTOM: // swap X & Y axes & invert Y axis
+        X.setup(SERVO_Y_PIN); 
+        Y.setup(SERVO_X_PIN);
+        Z.setup(SERVO_Z_PIN);
+        Y.invert(true);
+        break;
+    }
 
 }
 
@@ -520,6 +512,28 @@ void PiccoloLib::bezier(float x1, float y1, float cx1, float cy1, float cx2, flo
         float x = bezierPoint(x1, cx1, cx2, x2, t2);
         float y = bezierPoint(y1, cy1, cy2, y2, t2);
         vertex(x, y);
+    }
+}
+
+void Piccolo::bezierYZ(float y1, float z1, float cy1, float cz1, float cy2, float cz2, float y2, float z2){
+    float len = 0;
+    float py = y1;
+    float pz = z1;
+    
+    for(float t=0; t<=1+0.1f; t+=0.1f){
+        float y = bezierPoint(y1, cy1, cy2, y2, t);
+        float z = bezierPoint(z1, cz1, cz2, z2, t);
+        len += dist(y, z, 0, py, pz, 0);
+        py = y;
+        pz = z;   
+    }
+        
+    float bezStep = 1.0f/(len/stepSize);
+    
+    for(float t2=0; t2 <=1+bezStep; t2+=bezStep){
+        float y = bezierPoint(y1, cy1, cy2, y2, t2);
+        float z = bezierPoint(z1, cz1, cz2, z2, t2);
+        vertex(X.getPos(), y, z);
     }
 }
 
