@@ -1,7 +1,7 @@
 #PiccoloLib#
 
 
-PiccoloLib is a library for [Arduino](www.arduino.cc) that makes it simple to program a Piccolo.
+PiccoloLib is a library for [Arduino](http://www.arduino.cc) that makes it simple to program a Piccolo.
 
 * Control movement, speed and accuracy.
 * Various shape drawing functions.
@@ -27,40 +27,63 @@ Piccolo's output is intended to be used in mm, however you can scale the output 
 ####Setup, Configuration & Motion####
 
 **void setup()**
+
 Sets up piccolo using the default pin assignments for the servos: *setup(3,5,6)*
 
+
 **void setup(int xPin, int yPin, int zPin)**
+
 Set up piccolo using custom pins assignments
 
+
 **void invert(boolean invertX, boolean invertY, boolean invertZ)**
+
 Invert the output on any of the axes.
 
+
 **void moveCenter(float xOffset, float yOffset)**
+
 **void moveCenter(float xOffset, float yOffset, float zOffset)**
+
 Adjust piccolo's zero position.
 
+
 **void calibrate(float targetDimension, float actualX, float actualY)**
+
 **void calibrate(float targetDimension, float actualX, float actualY, float actualZ)**
+
 Use this to scale piccolo's output, which you can use to calibrate it's accuracy.  First draw a square(or cube) of *targetDimension*, then measure the output and put this into your *setup()* with these dimensions.
 
 **void setBedSize(float size)**
+
 **void setBedSize(float xySize, float zSize)**
+
 **void setBedSize(float xSize, float ySize, float zSize)**
+
 Will set the minimum and maximum positions of each axis, therefore defining the overall bed size.
 
 **void setSpeed(float speed)**
+
 Defines piccolo's movement speed when using vertex() or shape functions.  In mm per second.  Default speed is 60mm/s.
 
 **void setStepSize(float _stepSize)**
+
 Steps are used to control piccolo's motion and speed.  The default step size is 0.1mm.  A smaller step size means a more controlled motion, but too small will limit the maximum speed.  This also affects curvature when using *ellipse()*, *arc()*, or *bezier()* - a smaller stepSize means a less faceted curve
 
 **int drawOrientation**
+
 **void setDrawOrientation(int _orientation)**
+
 *Work in progress.* Rotates the output:
+
 0 - default, drawing with bottom of drawing to the left
+
 1 - top, as if piccolo is drawing upside down
+
 2 - right, drawing with the bottom of the drawing to the right
+
 3  - bottom, as if piccolo is drawing the correct way up
+
 
 ####Piccolo Inputs####
 
