@@ -32,10 +32,13 @@ Piccolo's output is intended to be used in mm, however you can scale the output 
 ####Setup, Configuration & Motion####
 
 `void setup()`  
-Sets up piccolo using the default pin assignments for the servos: *setup(3,5,6)*
+Sets up piccolo using the default pin assignments for the servos:
+X pin 3  
+Y pin 5  
+Z pin 6
 
 `void setup(int xPin, int yPin, int zPin)`  
-Set up piccolo using custom pins assignments
+Set up piccolo using custom pins assignments.
 
 `void invert(boolean invertX, boolean invertY, boolean invertZ)`  
 Invert the output on any of the axes.
@@ -46,7 +49,7 @@ Adjust piccolo's zero position.
 
 `void calibrate(float targetDimension, float actualX, float actualY)`  
 `void calibrate(float targetDimension, float actualX, float actualY, float actualZ)`  
-Use this to scale piccolo's output, which you can use to calibrate it's accuracy.  First draw a square(or cube) of *targetDimension*, then measure the output and put this into your *setup()* with these dimensions.
+Use this to scale piccolo's output, which you can use to calibrate its accuracy.  First draw a square(or cube) of *targetDimension*, then measure the output and put this into your *setup()* with these dimensions.
 
 `void setBedSize(float size)`  
 `void setBedSize(float xySize, float zSize)`  
@@ -57,15 +60,19 @@ Will set the minimum and maximum positions of each axis, therefore defining the 
 Defines piccolo's movement speed when using vertex() or shape functions.  In mm per second.  Default speed is 60mm/s.
 
 `void setStepSize(float _stepSize)`  
-Steps are used to control piccolo's motion and speed.  The default step size is 0.1mm.  A smaller step size means a more controlled motion, but too small will limit the maximum speed.  This also affects curvature when using *ellipse()*, *arc()*, or *bezier()* - a smaller stepSize means a less faceted curve
+Steps are used to control piccolo's motion and speed.  The default step size is 0.1mm.  A smaller step size means a more controlled motion, but too small will limit the maximum speed.  
+This also affects curvature when using *ellipse()*, *arc()*, or *bezier()* - a smaller stepSize means a less faceted curve
 
 `int drawOrientation`  
 `void setDrawOrientation(int _orientation)`  
 *Work in progress.* Rotates the output:  
-0 - default, drawing with bottom of drawing to the left  
-1 - top, as if piccolo is drawing upside down  
-2 - right, drawing with the bottom of the drawing to the right  
-3  - bottom, as if piccolo is drawing the correct way up  
+0 - default, drawing with bottom of drawing to the left.  
+1 - top, as if piccolo is drawing upside down.  
+2 - right, drawing with the bottom of the drawing to the right.  
+3  - bottom, as if piccolo is drawing the correct way up.  
+
+`boolean disableMotion`  
+Disables servo motion, for debugging purposes
 
 ---
 ####Piccolo Inputs####
@@ -74,10 +81,10 @@ Steps are used to control piccolo's motion and speed.  The default step size is 
 Returns a value from 0 to 1023 based on the position of the thumbwheel.
 
 `boolean buttonOneDown()`  
-Returns true if button one is pressed
+Returns true if button one is pressed.
 
 `boolean buttonTwoDown()`  
-Returns true if button two is pressed
+Returns true if button two is pressed.
 
 ---
 ####Mechanical Control####
@@ -87,10 +94,10 @@ Returns true if button two is pressed
 `void moveZ(float z)`  
 `void move(float x, float y)`  
 `void move(float x, float y, float z)`  
-Sends the servo(s) to a position.  They will respond with their maximum speed, and you may need to allow time for the servos to move in your code with *delay()8.
+Sends the servo(s) to a position.  They will respond at their maximum speed, and you may need to allow time for the servos to move in your code with *delay()*.
 
 `void home()`  
-Moves piccolo to (minimum X position, 0, pen-up position)
+Moves piccolo to (X minimum, 0, pen-up position).
 
 `void thumbwheelControlX()`  
 `void thumbwheelControlY()`  
@@ -130,15 +137,14 @@ Moves piccolo to (x,y,z) using the step size and speed to control the motion.
 ####Serial Communication####
 
 `void serialSetup()`  
-Opens a serial port at 115200 baud.
+Opens a serial port at 115200 baud. ready for Piccolo instructions from Controllo or another host device. This is only needed if Piccolo is controlled remotely. 
 
 `void serialLoop()`  
+Main Serial loop, this should be called in program main loop to check for waiting piccolo instructions on the serial port. This is only needed if Piccolo is controlled remotely via Controllo or another host device. 
 
 `boolean serialStream`  
-Streams coordinates over Serial as G-Code
-
-`boolean disableMotion`  
-Disables servo motion, for debugging purposes
+A debug flag used to stream Piccolo's move coordinates back over serial for rendering in Controllo.  
+This is also useful for retrieving coordinates from Piccolo to debug your toolpath.
 
 
 ---
@@ -175,11 +181,13 @@ Each servo is controlled as a PiccoloAxis object.
 `void setup(int _pin, int _uScenter, float _bedSize)`  
 `void setup(int _pin, int _uScenter, float _bedSize, float _uSdeg)`  
 `void setup(int _pin, int _uScenter, float _bedSize, float _uSdeg, float _gearSize)`  
-`void setup(int _pin, int _uScenter, float _bedSize, float _uSdeg, float _gearSize, boolean _inverted)`  
+`void setup(int _pin, int _uScenter, float _bedSize, float _uSdeg, float _gearSize, boolean _inverted)`
+
 `void calcuSmm()`  
 `void calcuSrange()`  
 `void calcMinMax()`  
-`void calcuSdeg(float target, float actual)`  
+`void calcuSdeg(float target, float actual)`
+
 `void invert(boolean _inverted)`  
 `void moveCenter(float offset)`  
 `void setBedSize(float newSize)`  
