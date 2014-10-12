@@ -1,5 +1,5 @@
+import piccoloP5.*;
 import controlP5.*;
-import piccoloMeetProcessing.*;
 
 
 ControlP5 cp5;
@@ -26,7 +26,7 @@ CaptureFrame captureFrame = null;
 
 
 public Face face = new Face();
-Piccolo piccolo = new Piccolo(bedWidth,bedHeight,bedDepth);
+PiccoloP5 piccolo = new PiccoloP5(bedWidth,bedHeight,bedDepth);
 
 
 
