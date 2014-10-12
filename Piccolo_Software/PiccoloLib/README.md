@@ -2,7 +2,7 @@
 
 PiccoloLib is a library for [Arduino](http://www.arduino.cc) that makes it simple to program a Piccolo.
 
-For an overview of PiccoloLib basics, take a look at [Getting Started](../wiki/Getting-Started)
+For an overview of PiccoloLib basics, take a look at [Getting Started](../../wiki/Getting-Started)
 
 * Control movement, speed and accuracy.
 * Various shape drawing functions.
@@ -74,7 +74,7 @@ This also affects curvature when using *ellipse()*, *arc()*, or *bezier()* - a s
 3  - bottom, as if piccolo is drawing the correct way up.  
 
 `boolean disableMotion`  
-Disables servo motion, for debugging purposes
+Disables servo motion, for debugging purposes.
 
 ---
 ####Piccolo Inputs####
