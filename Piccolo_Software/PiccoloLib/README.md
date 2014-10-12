@@ -10,6 +10,7 @@ PiccoloLib is a library for [Arduino](http://www.arduino.cc) that makes it simpl
 * [UsbTether]() example lets you control piccolo from Processing using the PiccoloP5 library.
 * Configure axes individually with PiccoloAxis class, or add additional axes.
 
+===
 ##Installation##
 
 1. Download PiccoloLib_current.zip
@@ -18,13 +19,16 @@ PiccoloLib is a library for [Arduino](http://www.arduino.cc) that makes it simpl
 Alternatively, you can extract the archive into into your Arduino libraries folder manually.
 If you are not sure where your libraries folder is, have a look at the Arduino libraries guide: http://arduino.cc/en/Guide/Libraries
 
+===
 ##Reference##
 
 Piccolo's output is intended to be used in mm, however you can scale the output to any arbitrary units using *calibrate()*.
 
+---
 ###PiccoloLib Class###
 
 ####Setup, Configuration & Motion####
+---
 
 **void setup()**
 
@@ -86,31 +90,42 @@ Steps are used to control piccolo's motion and speed.  The default step size is 
 
 
 ####Piccolo Inputs####
+---
 
 **float readThumbwheel()**
+
 Returns a value from 0 to 1023 based on the position of the thumbwheel.
 
 **boolean buttonOneDown()**
+
 Returns true if button one is pressed
 
 **boolean buttonTwoDown()**
+
 Returns true if button two is pressed
 
+
 ####Mechanical Control####
+---
 
 **void moveX(float x)**
+
 **void moveY(float y)**
+
 **void moveZ(float z)**
+
 **void move(float x, float y)**
+
 **void move(float x, float y, float z)**
-Sends the servo(s) to a position.  They will respond with their maximum speed, and you may need to allow time for the servos to move in your code with *delay()8.
+
+Sends the servo(s) to a position.  They will respond with their maximum speed, and you may need to allow time for the servos to move in your code with *delay()*.
 
 **void home()**
 Moves piccolo to (minimum X position, 0, pen-up position)
 
-**void thumbwheelControlX()**
-**void thumbwheelControlY()**
-**void thumbwheelControlZ()**
+#####void thumbwheelControlX()
+#####void thumbwheelControlY()
+#####void thumbwheelControlZ()
 Will move piccolo in each axis based on the thumbwheel position, between the minimum and maximum.
 
 **void setPenDownPos(float _penDownPos)**
