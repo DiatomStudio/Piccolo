@@ -2,11 +2,13 @@
 
 PiccoloLib is a library for [Arduino](http://www.arduino.cc) that makes it simple to program a Piccolo.
 
+For an overview of PiccoloLib basics, take a look at [Getting Started](../wiki/Getting-Started)
+
 * Control movement, speed and accuracy.
 * Various shape drawing functions.
 * Configure & calibrate Piccolo.
 * Send Piccolo co-ordinates over serial.
-* [UsbTether]() example lets you control piccolo from Processing using the PiccoloP5 library.
+* [UsbTether](PiccoloLib/examples/usbTether/usbTether.ino) example lets you control piccolo from Processing using the PiccoloP5 library.
 * Configure axes individually with PiccoloAxis class, or add additional axes.
 
 ---
@@ -32,7 +34,7 @@ Piccolo's output is intended to be used in mm, however you can scale the output 
 ####Setup, Configuration & Motion####
 
 `void setup()`  
-Sets up piccolo using the default pin assignments for the servos:
+Sets up piccolo using the default pin assignments for the servos:  
 X pin 3  
 Y pin 5  
 Z pin 6
@@ -49,7 +51,7 @@ Adjust piccolo's zero position.
 
 `void calibrate(float targetDimension, float actualX, float actualY)`  
 `void calibrate(float targetDimension, float actualX, float actualY, float actualZ)`  
-Use this to scale piccolo's output, which you can use to calibrate its accuracy.  First draw a square(or cube) of *targetDimension*, then measure the output and put this into your *setup()* with these dimensions.
+Use this to scale piccolo's output, which you can use to calibrate its accuracy.  First draw a square (or cube) of *targetDimension*, then measure the output and put *calibrate()* into your *setup()* with these dimensions as *actualX*, *actualY* etc.
 
 `void setBedSize(float size)`  
 `void setBedSize(float xySize, float zSize)`  
@@ -65,7 +67,7 @@ This also affects curvature when using *ellipse()*, *arc()*, or *bezier()* - a s
 
 `int drawOrientation`  
 `void setDrawOrientation(int _orientation)`  
-*Work in progress.* Rotates the output:  
+**_Work in progress._** Rotates the output:  
 0 - default, drawing with bottom of drawing to the left.  
 1 - top, as if piccolo is drawing upside down.  
 2 - right, drawing with the bottom of the drawing to the right.  
