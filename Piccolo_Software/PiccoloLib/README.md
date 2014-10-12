@@ -1,5 +1,5 @@
 #PiccoloLib#
-------------
+
 
 PiccoloLib is a library for [Arduino](www.arduino.cc) that makes it simple to program a Piccolo.
 
