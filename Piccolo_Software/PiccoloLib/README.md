@@ -31,13 +31,17 @@ Piccolo's output is intended to be used in mm, however you can scale the output 
 ---
 ####Setup, Configuration & Motion####
 
-`void **setup**()`  
+```arduino
+void setup()
+```
 Sets up piccolo using the default pin assignments for the servos: *setup(3,5,6)*
 
-`void **setup**(int xPin, int yPin, int zPin)`  
+```arduino
+void setup(int xPin, int yPin, int zPin)
+```
 Set up piccolo using custom pins assignments
 
-**void invert(boolean invertX, boolean invertY, boolean invertZ)**  
+`void invert(boolean invertX, boolean invertY, boolean invertZ)`  
 Invert the output on any of the axes.
 
 **void moveCenter(float xOffset, float yOffset)**  
