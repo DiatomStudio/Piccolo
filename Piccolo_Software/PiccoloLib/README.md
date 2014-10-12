@@ -2,7 +2,7 @@
 
 PiccoloLib is a library for [Arduino](http://www.arduino.cc) that makes it simple to program a Piccolo.
 
-For an overview of PiccoloLib basics, take a look at [Getting Started](../../wiki/Getting-Started)
+For an overview of PiccoloLib basics, take a look at [Getting Started](../../../../wiki/Getting-Started)
 
 * Control movement, speed and accuracy.
 * Various shape drawing functions.
