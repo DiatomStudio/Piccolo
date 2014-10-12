@@ -10,7 +10,6 @@ PiccoloLib is a library for [Arduino](http://www.arduino.cc) that makes it simpl
 * Configure axes individually with PiccoloAxis class, or add additional axes.
 
 ---
----
 
 ##Installation##
 
@@ -21,24 +20,21 @@ Alternatively, you can extract the archive into into your Arduino libraries fold
 If you are not sure where your libraries folder is, have a look at the Arduino libraries guide: http://arduino.cc/en/Guide/Libraries
 
 ---
----
----
 
 ##Reference##
 
 Piccolo's output is intended to be used in mm, however you can scale the output to any arbitrary units using *calibrate()*.
 
----
----
+
 ###PiccoloLib Class###
 
 ---
 ####Setup, Configuration & Motion####
 
-**void setup()**  
+`void **setup**()`  
 Sets up piccolo using the default pin assignments for the servos: *setup(3,5,6)*
 
-**void setup(int xPin, int yPin, int zPin)**  
+`void **setup**(int xPin, int yPin, int zPin)`  
 Set up piccolo using custom pins assignments
 
 **void invert(boolean invertX, boolean invertY, boolean invertZ)**  
@@ -144,7 +140,7 @@ Streams coordinates over Serial as G-Code
 **boolean disableMotion**  
 Disables servo motion, for debugging purposes
 
----
+
 ---
 ###PiccoloAxis class###
 
@@ -154,7 +150,7 @@ Each servo is controlled as a PiccoloAxis object.
 ---
 ####Variable Heirarchy####
 
-1.**uScenter** - Defines the center position of the servo, based on where we want piccolo think the center is.  Normally this would be mid-way between the minimum and maximum rotation of the servo.  *Default is 1551uS*  
+1. **uScenter** - Defines the center position of the servo, based on where we want piccolo think the center is.  Normally this would be mid-way between the minimum and maximum rotation of the servo.  Default is 1551uS.  
 **bedSize** - We define what we want the bed size to be.  The default is 50mm, which is a conservative size that should fit within the range of most DS929-MG servos.  
 **uSdeg** - We specify the change in uS per degree of rotation for the servo. This can be calibrated as in 5.  Default is 9.7 us/deg.  
 **gearSize** - We specify the gear pitch diameter based on the actual pinion gear dimensions.  Default is 35.23mm.
