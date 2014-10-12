@@ -9,6 +9,9 @@ PiccoloLib is a library for [Arduino](http://www.arduino.cc) that makes it simpl
 * [UsbTether]() example lets you control piccolo from Processing using the PiccoloP5 library.
 * Configure axes individually with PiccoloAxis class, or add additional axes.
 
+---
+---
+
 ##Installation##
 
 1. Download PiccoloLib_current.zip
@@ -17,12 +20,19 @@ PiccoloLib is a library for [Arduino](http://www.arduino.cc) that makes it simpl
 Alternatively, you can extract the archive into into your Arduino libraries folder manually.
 If you are not sure where your libraries folder is, have a look at the Arduino libraries guide: http://arduino.cc/en/Guide/Libraries
 
+---
+---
+---
+
 ##Reference##
 
 Piccolo's output is intended to be used in mm, however you can scale the output to any arbitrary units using *calibrate()*.
 
+---
+---
 ###PiccoloLib Class###
 
+---
 ####Setup, Configuration & Motion####
 
 **void setup()**  
@@ -61,6 +71,7 @@ Steps are used to control piccolo's motion and speed.  The default step size is 
 2 - right, drawing with the bottom of the drawing to the right  
 3  - bottom, as if piccolo is drawing the correct way up  
 
+---
 ####Piccolo Inputs####
 
 **float readThumbwheel()**  
@@ -72,6 +83,7 @@ Returns true if button one is pressed
 **boolean buttonTwoDown()**  
 Returns true if button two is pressed
 
+---
 ####Mechanical Control####
 
 **void moveX(float x)**  
@@ -93,6 +105,7 @@ Will move piccolo in each axis based on the thumbwheel position, between the min
 **float getPenDownPos()**  
 Set or retrieve the pen-down position.
 
+---
 ####Making Shapes####
 
 In general all drawing commands follow the same format as Processing drawing commands, for more info on these please visit: http://processing.org/reference/
@@ -117,6 +130,7 @@ Moves piccolo to (x,y,z) using the step size and speed to control the motion.
 **float bezierPoint(float a, float b, float c, float d, float t)**  
 **float bezierTangent(float a, float b, float c, float d, float t)**  
 
+---
 ####Serial Communication####
 
 **void serialSetup()**  
@@ -130,13 +144,14 @@ Streams coordinates over Serial as G-Code
 **boolean disableMotion**  
 Disables servo motion, for debugging purposes
 
-
-
+---
+---
 ###PiccoloAxis class###
 
 Each servo is controlled as a PiccoloAxis object.  
 *uS = pulse width in microseconds of signal sent to the servo.*
 
+---
 ####Variable Heirarchy####
 
 1.**uScenter** - Defines the center position of the servo, based on where we want piccolo think the center is.  Normally this would be mid-way between the minimum and maximum rotation of the servo.  *Default is 1551uS*  
@@ -157,6 +172,7 @@ Each servo is controlled as a PiccoloAxis object.
 5. uSdeg can be calibrated by drawing a target dimension and measuring the actual output:  
 `uSdeg  = ((target*uSmm)/actual) * (PI/360)*gearSize`
 
+---
 ####Setup, Configuration & Motion####
 
 **void setup(int _pin)**  
@@ -173,6 +189,7 @@ Each servo is controlled as a PiccoloAxis object.
 **void setBedSize(float newSize)**  
 **void move(float _pos)**  
 
+---
 ####Helper Functions####
 
 **int getPin()**  
