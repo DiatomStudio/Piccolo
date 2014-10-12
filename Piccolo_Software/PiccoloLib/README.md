@@ -123,9 +123,9 @@ Sends the servo(s) to a position.  They will respond with their maximum speed, a
 **void home()**
 Moves piccolo to (minimum X position, 0, pen-up position)
 
-#####void thumbwheelControlX()
-#####void thumbwheelControlY()
-#####void thumbwheelControlZ()
+**void thumbwheelControlX()**
+**void thumbwheelControlY()**\s
+**void thumbwheelControlZ()**\s\s
 Will move piccolo in each axis based on the thumbwheel position, between the minimum and maximum.
 
 **void setPenDownPos(float _penDownPos)**
