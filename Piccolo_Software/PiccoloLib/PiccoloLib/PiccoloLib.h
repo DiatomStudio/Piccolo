@@ -131,12 +131,13 @@ public:
     float getPos();
     boolean isInverted();
 
-    // Advanced
+    // Advanced (to do)
+    /*
     float setuSmm(float _uSmm);
     int   setuSrange(int _uSrange);
     int   setuSmin(int _uSmin);
     int   setuSmax(int _uSmax);
-
+    */
 
 private:
 
