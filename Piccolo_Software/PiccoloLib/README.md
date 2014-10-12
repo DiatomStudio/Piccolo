@@ -3,17 +3,17 @@
 
 PiccoloLib is a library for [Arduino](www.arduino.cc) that makes it simple to program a Piccolo.
 
-*Control movement, speed and accuracy.
-*Various shape drawing functions.
-*Configure & calibrate Piccolo.
-*Send Piccolo co-ordinates over serial.
-*[UsbTether]() example lets you control piccolo from Processing using the PiccoloP5 library.
-*Configure axes individually with PiccoloAxis class, or add additional axes.
+* Control movement, speed and accuracy.
+* Various shape drawing functions.
+* Configure & calibrate Piccolo.
+* Send Piccolo co-ordinates over serial.
+* [UsbTether]() example lets you control piccolo from Processing using the PiccoloP5 library.
+* Configure axes individually with PiccoloAxis class, or add additional axes.
 
 ##Installation##
 
-1) Download PiccoloLib_current.zip
-2) Open the zip in Arduino by: Sketch > Import Library > Add Library
+1. Download PiccoloLib_current.zip
+2. Open the zip in Arduino by: Sketch > Import Library > Add Library
 
 Alternatively, you can extract the archive into into your Arduino libraries folder manually.
 If you are not sure where your libraries folder is, have a look at the Arduino libraries guide: http://arduino.cc/en/Guide/Libraries
@@ -140,23 +140,23 @@ Each servo is controlled as a PiccoloAxis object.
 
 ####Variable Heirarchy####
 
-**1) uScenter** - Defines the center position of the servo, based on where we want piccolo think the center is.  Normally this would be mid-way between the minimum and maximum rotation of the servo.  *Default is 1551uS*
+1.**uScenter** - Defines the center position of the servo, based on where we want piccolo think the center is.  Normally this would be mid-way between the minimum and maximum rotation of the servo.  *Default is 1551uS*
 **bedSize** - We define what we want the bed size to be.  The default is 50mm, which is a conservative size that should fit within the range of most DS929-MG servos.
 **uSdeg** - We specify the change in uS per degree of rotation for the servo. This can be calibrated as in 5).  Default is 9.7 us/deg.
 **gearSize** - We specify the gear pitch diameter based on the actual pinion gear dimensions.  Default is 35.23mm.
 
-**2)**  The gear pitch diameter and the change in uS per degree are used to calculate
+2. The gear pitch diameter and the change in uS per degree are used to calculate
 the change in uS per mm of motion:
 `uSmm = uSdeg/((PI/360)*gearSize)`
 
-**3)**  The uS range is found by multiplying the bed size by the uS/mm:
+3. The uS range is found by multiplying the bed size by the uS/mm:
 `uSrange = bedSize * uSmm`
 
-**4)**  The uS minimum and maximums are found by using the uS range and center:
+4. The uS minimum and maximums are found by using the uS range and center:
 `uSmin = uScenter - (uSrange/2)`
 `uSmax = uScenter + (uSrange/2)`
 
-**5)** uSdeg can be calibrated by drawing a target dimension and measuring the actual output:
+5. uSdeg can be calibrated by drawing a target dimension and measuring the actual output:
     uSdeg  = ((target*uSmm)/actual) * (PI/360)*gearSize
 
 ####Setup, Configuration & Motion####
