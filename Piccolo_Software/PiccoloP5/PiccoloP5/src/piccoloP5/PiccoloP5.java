@@ -28,8 +28,21 @@
 package piccoloP5;
 
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.sun.org.apache.xml.internal.security.utils.Base64;
+import com.sun.tools.javac.util.Convert;
 
 import processing.core.*;
 import processing.serial.*;
@@ -152,6 +165,11 @@ public class PiccoloP5 extends PGraphics {
 
 	String code[];
 
+	/*HTTP
+	 * Send Piccolo commands across a http connection
+	 * */
+	private String serverAddress;
+	private boolean useHttpConnection = false;
 
 	int zDraw = 0;
 	int zLift = 10;
@@ -207,7 +225,7 @@ public void arc(float x , float y , float width, float height, float startA, flo
     stopA -= PI/2.0f; // correct to match processing
     
     for(float a=startA ; a <= stopA; a+=arcStep) {
-        vertex((parent.sin(a)*(width/2.0f)) + x, (parent.cos(a)*(height/2.0f)) + y);
+        vertex((PApplet.sin(a)*(width/2.0f)) + x, (PApplet.cos(a)*(height/2.0f)) + y);
     }
 }
 
@@ -243,7 +261,7 @@ public void vertex(float x, float y) {
 
 
       if(debugVertex)
-    	  parent.println("vertex: {x:"+x+ " y:"+y+ "}");
+    	  PApplet.println("vertex: {x:"+x+ " y:"+y+ "}");
 
 
   }
@@ -273,7 +291,7 @@ public void vertex(float x, float y) {
     }
 
   if(debugVertex)
-    parent.println("vertex: {x:"+x+ " y:"+y+ " z:"+z+"}");
+    PApplet.println("vertex: {x:"+x+ " y:"+y+ " z:"+z+"}");
 
   }
 
@@ -351,7 +369,8 @@ public
    }
    */
 
-  public void beginShape(int kind) {
+  @Override
+public void beginShape(int kind) {
     penUp = true;
     super.beginShape(kind);
 
@@ -360,12 +379,14 @@ public
     }
   }
 
-  public void beginShape() {
+  @Override
+public void beginShape() {
     penUp = true;
     super.beginShape();
   }
 
-  public void endShape() {
+  @Override
+public void endShape() {
     if (beginShapePos != null) {
       vertex(beginShapePos.x, beginShapePos.y);
       beginShapePos = null;
@@ -396,13 +417,13 @@ public
      return;
      */
     if (flipX)
-      x = parent.map(x, -(bedWidth/2.0f), (bedWidth/2.0f), (bedWidth/2.0f), -(bedWidth/2.0f));
+      x = PApplet.map(x, -(bedWidth/2.0f), (bedWidth/2.0f), (bedWidth/2.0f), -(bedWidth/2.0f));
 
     if (flipY)
-      y = parent.map(y, -(bedHeight/2.0f), (bedHeight/2.0f), (bedHeight/2.0f), -(bedHeight/2.0f));
+      y = PApplet.map(y, -(bedHeight/2.0f), (bedHeight/2.0f), (bedHeight/2.0f), -(bedHeight/2.0f));
 
     if (flipZ)
-      z = parent.map(z, -(bedDepth/2.0f), (bedDepth/2.0f), (bedDepth/2.0f), -(bedDepth/2.0f));
+      z = PApplet.map(z, -(bedDepth/2.0f), (bedDepth/2.0f), (bedDepth/2.0f), -(bedDepth/2.0f));
       
 
       /*
@@ -415,13 +436,13 @@ public
       }
 
 
-      x = parent.constrain(x,-bedWidth/2.0f,bedWidth/2.0f);
-      y = parent.constrain(y,-bedHeight/2.0f,bedHeight/2.0f);
-      z = parent.constrain(z,-bedDepth/2.0f,bedDepth/2.0f);
+      x = PApplet.constrain(x,-bedWidth/2.0f,bedWidth/2.0f);
+      y = PApplet.constrain(y,-bedHeight/2.0f,bedHeight/2.0f);
+      z = PApplet.constrain(z,-bedDepth/2.0f,bedDepth/2.0f);
 
 
   if(debugStep)
-    parent.println("step: {x:"+x+ " y:"+y+ " z:"+z+"}");
+    PApplet.println("step: {x:"+x+ " y:"+y+ " z:"+z+"}");
 
 
     codeStack.add(new PVector(x, y, z));
@@ -429,7 +450,8 @@ public
   }
 
   //Clear all drawing commands
-  public void clear() {
+  @Override
+public void clear() {
     codeStack.clear();
     numLines=0;
     simStep = 0;
@@ -466,7 +488,7 @@ public
 
 
 if(debugDraw)
-  parent.println("Draw line {x:" + p.x*scale + " y:"  + p.y*scale + " z:"+ p.z*scale + "} {x:" + prev.x*scale + " y:" +prev.y*scale + " z:" + prev.z*scale + " }" );
+  PApplet.println("Draw line {x:" + p.x*scale + " y:"  + p.y*scale + " z:"+ p.z*scale + "} {x:" + prev.x*scale + " y:" +prev.y*scale + " z:" + prev.z*scale + " }" );
 
 
         g.line(p.x*scale, p.y*scale,p.z*scale, prev.x*scale, prev.y*scale,prev.z*scale);
@@ -514,6 +536,10 @@ if(debugDraw)
 
 
   public void start(){
+	  
+	  if(useHttpConnection)
+		  sendHttp();
+	  else
 	  establishContact();
   }
   
@@ -521,8 +547,8 @@ if(debugDraw)
   
   private void establishContact() {
       //S = get ready to send 
-      parent.println("establishContact");
-      parent.println(codeStack.size() + " lines to send");
+      PApplet.println("establishContact");
+      PApplet.println(codeStack.size() + " lines to send");
       if(serialConnected){
       serial.clear();
       serial.write(COMMAND_CONNECT);
@@ -550,9 +576,9 @@ if(debugDraw)
     if (inString == null)
       break;
       
-    inString = parent.trim(inString);//Until('\n'));  
+    inString = PApplet.trim(inString);//Until('\n'));  
 
-    parent.println("|"+inString +"|");
+    PApplet.println("|"+inString +"|");
     serial.clear();
 
     if (inString.startsWith("G01")) {
@@ -567,15 +593,15 @@ if(debugDraw)
 if(inString.startsWith("setZ")){
   float zVal = Float.parseFloat(inString.substring(5,inString.length()));
   pressure(zVal); 
-  parent.println("Z height set to: "+zVal);
+  PApplet.println("Z height set to: "+zVal);
  // pressureKnob.setValue(zVal); // add soem type of callback?
 }
 
 
     if (inString.equals(String.valueOf(COMMAND_READY))) { 
       serial.clear();
-      parent.println("Plotsi Connected!");      
-      parent.println("Ready to Plot!");
+      PApplet.println("Plotsi Connected!");      
+      PApplet.println("Ready to Plot!");
       //serial.write(stepDelay);
     }
     else if (inString.equals(String.valueOf(COMMAND_SEND_NEXT)) && lineCount < codeStack.size()) {
@@ -584,7 +610,7 @@ if(inString.startsWith("setZ")){
       TODO: send these as binary! currently each pos takes 4 bytes a unsigned int should also be 4 bytes. 
       */
 
-      parent.println("begin sending positions");
+      PApplet.println("begin sending positions");
       serial.clear();
       float x = ((PVector)(codeStack.get(lineCount))).x;
       float y = ((PVector)(codeStack.get(lineCount))).y;
@@ -595,12 +621,12 @@ if(inString.startsWith("setZ")){
       int yScaled = (int)(y*100.0);
       int zScaled = (int)(z*100.0);
 
-      parent.println("serial write {x:" +xScaled + " y:" + yScaled + " z:" +zScaled + "}");
+      PApplet.println("serial write {x:" +xScaled + " y:" + yScaled + " z:" +zScaled + "}");
 
       serial.write(COMMAND_POS_START_BYTE);
-      sendInt((int)xScaled);
-      sendInt((int)yScaled);
-      sendInt((int)zScaled);
+      sendInt(xScaled);
+      sendInt(yScaled);
+      sendInt(zScaled);
       serial.write(COMMAND_POS_END_BYTE);
 
       sendStringIndex = 1;
@@ -639,12 +665,126 @@ if(inString.startsWith("setZ")){
   }
 
   
+  public void useHttpConnection(String address){
+	  serverAddress = address;
+	  useHttpConnection = true;
+  }
+ 
+  public void sendHttp(){
+	  
+	  URL url;
+	  HttpURLConnection connection;
+	  DataOutputStream outputStream = null;
+	
+
+	  if(codeStack.size() ==0)
+		  return;
+
+      //4 bytes in a int
+      //3 ints in a coordinate
+      //4 byte START_SEND
+      //4 byte END_SEND
+      
+      int numberOfBytes = (((3*4))*codeStack.size() )+24;
+      byte[] codeStackBytes = new byte[numberOfBytes];
+
+
+	  
+      //checksum start 
+      codeStackBytes[0] = COMMAND_CONNECT;
+      //next 11 bytes are garbage can be used later if needed. 
+
+      
+      for(int i = 0; i < codeStack.size(); i++){
+    		      	  
+    	 
+          int x = (int)((((PVector)(codeStack.get(i))).x)*100.0);
+          int y = (int)((((PVector)(codeStack.get(i))).y)*100.0);
+          int z = (int)((((PVector)(codeStack.get(i))).z)*100.0);  
+          
+          parent.println("ln:"+i + " "+ x + " " + y + " "+ z);
+
+          //X
+          codeStackBytes[((i+1)*12)+0]= (byte)(x);
+          codeStackBytes[((i+1)*12)+1]= (byte)(x>>8);
+          codeStackBytes[((i+1)*12)+2]= (byte)(x>>16);
+          codeStackBytes[((i+1)*12)+3]= (byte)(x>>24);
+
+          parent.println("ln:"+i + " "+codeStackBytes[((i+1)*12)+0] + " " +codeStackBytes[((i+1)*12)+1] + " " + codeStackBytes[((i+1)*12)+2] + " " + codeStackBytes[((i+1)*12)+3]);
+
+          
+          //Y
+          codeStackBytes[((i+1)*12)+4]= (byte)(y);
+          codeStackBytes[((i+1)*12)+5]= (byte)(y>>8);
+          codeStackBytes[((i+1)*12)+6]= (byte)(y>>16);
+          codeStackBytes[((i+1)*12)+7]= (byte)(y>>24);
+          
+          //Z
+          codeStackBytes[((i+1)*12)+8]= (byte)(z);
+          codeStackBytes[((i+1)*12)+9]= (byte)(z>>8);
+          codeStackBytes[((i+1)*12)+10]= (byte)(z>>16);
+          codeStackBytes[((i+1)*12)+11]= (byte)(z>>24);
+          
+      }
+      
+      //checksum start 
+      codeStackBytes[codeStackBytes.length-1] = COMMAND_CONNECT;
+      //next 11 bytes are garbage can be used later if needed. 
+      
+      
+      //outputStream.write("codeStack=");
+
+              //byte[] buffer contains the data
+      try{
+    	  PApplet.println("About to send drawing to: "+ serverAddress); 
+    	  PApplet.println("codeStack size to send: "+ (numberOfBytes)+"b"); 
+    	  
+  		String urlParameters = "codeStack=";
+
+  		
+  		url = new URL(serverAddress);
+	    connection = (HttpURLConnection) url.openConnection();
+	    connection.setDoOutput(true);
+	    connection.setDoInput(true);
+
+	  //  String stringToStore = Base64.encode(codeStackBytes).toString();
+	    
+	    
+		outputStream = new DataOutputStream( connection.getOutputStream());
+	   // outputStream.writeBytes(urlParameters);
+		outputStream.write(codeStackBytes);
+		outputStream.flush();
+	    outputStream.close();
+	    
+	      //Get Response	
+	      InputStream is = connection.getInputStream();
+	      BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+	      String line;
+	      StringBuffer response = new StringBuffer(); 
+	      parent.println("Getting Http response");
+
+	      while((line = rd.readLine()) != null) {
+	        parent.println(line);
+	      }
+	      rd.close();
+	      
+	      
+
+	} catch (IOException e) {
+		PApplet.println("unable to send drawing to server");
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}       
+      
+  }
+  
+  
   
   public void removeOcclusions(PGraphics occlusionCanvas){
 	  
 	  
-	  parent.println("Size before remove occlusions: "+codeStack.size());
-	  float scale = (float)occlusionCanvas.width/ bedWidth;
+	  PApplet.println("Size before remove occlusions: "+codeStack.size());
+	  float scale = occlusionCanvas.width/ bedWidth;
 	  occlusionCanvas.beginDraw();
 	    for (int i = 0; i < codeStack.size(); i ++) {
 	        PVector p = (PVector)codeStack.get(i);
@@ -674,7 +814,7 @@ if(inString.startsWith("setZ")){
 	        }
 	    }
 	    occlusionCanvas.endDraw();
-		  parent.println("Size after remove occlusions: "+codeStack.size());
+		  PApplet.println("Size after remove occlusions: "+codeStack.size());
 
   }
 
@@ -719,26 +859,7 @@ if(inString.startsWith("setZ")){
 		return VERSION;
 	}
 
-	/**
-	 * 
-	 * @param theA
-	 *          the width of test
-	 * @param theB
-	 *          the height of test
-	 */
-	public void setVariable(int theA, int theB) {
-		myVariable = theA + theB;
-	}
 
-	/**
-	 * 
-	 * @return int
-	 */
-	public int getVariable() {
-		return myVariable;
-	}
-	
-	
 	
 	
 	

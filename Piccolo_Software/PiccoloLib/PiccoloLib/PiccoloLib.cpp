@@ -283,13 +283,13 @@ void PiccoloLib::move(float x, float y){
 void PiccoloLib::move(float x, float y, float z){
 
     if (serialStream) {
-        Serial.print("x:");
-        Serial.print(x);
-        Serial.print(" y:");
-        Serial.print(y);
-        Serial.print(" z:");
-        Serial.print(z);
-        Serial.println();
+        Serial1.print("x:");
+        Serial1.print(x);
+        Serial1.print(" y:");
+        Serial1.print(y);
+        Serial1.print(" z:");
+        Serial1.print(z);
+        Serial1.println();
         delay(10);
     }
 
@@ -584,7 +584,7 @@ float PiccoloLib::calcFloat(int data[], int ind) {
 
 void PiccoloLib::serialSetup() {
 
-    Serial.begin(115200);
+    Serial1.begin(115200);
     serialStream = false; // only set this if we want to stream back our movements to the console 
 
 }
@@ -620,9 +620,9 @@ E   go home
 */
 
     
-    while (Serial.available() > 0) {
+    while (Serial1.available() > 0) {
 
-        inByte = Serial.read();
+        inByte = Serial1.read();
 
         //Received end of position byte. 
        if(waitingForPos && inByte == COMMAND_POS_END_BYTE  && index == 12 ) {
@@ -638,7 +638,7 @@ E   go home
             waitingForPos =false;
 
             vertex(xPosIn, yPosIn, zPosIn);
-            Serial.println(COMMAND_SEND_NEXT);
+            Serial1.println(COMMAND_SEND_NEXT);
 
 
         
@@ -655,9 +655,9 @@ E   go home
             for (int i=0; i<25; i++) {
                 inString[i] = 0;
             }
-            Serial.println(COMMAND_READY);
+            Serial1.println(COMMAND_READY);
             delay(300);
-            Serial.println(COMMAND_SEND_NEXT);
+            Serial1.println(COMMAND_SEND_NEXT);
             waitingForPos = false;
             
         }
