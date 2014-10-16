@@ -83,8 +83,6 @@ void setup() {
   piccolo.setStepRes(1f);
   piccolo.bezierDetail(20); 
   piccolo.rotate(PI/2.0f);
-
-  piccolo.useHttpConnection("https://agent.electricimp.com/YfD2LsizYsy9");
   
   //setup GUI
   controlP5 = new ControlP5(this);
@@ -399,10 +397,3 @@ public void bezier(){
   drawBezier(piccolo);
 
 }
-
-
-
-
-
-
-
