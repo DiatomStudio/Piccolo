@@ -1,44 +1,67 @@
+//TODO: add paramaters to all commands 
 
 
+
+void drawBezier(PGraphics g){
+
+PVector p1 = new PVector(-25,-25,0);
+PVector p2 = new PVector(25,25,0);
+PVector c1 = new PVector(25,-25,0);
+PVector c2 = new PVector(25,-25,0);
+
+
+for(int i = 25; i > -25 ; i-=2){
+  c1.x = i; c1.y = -i;
+  c2.x = i; c2.y = -i;
+  g.bezier(p1.x, p1.y,c1.x,c1.y,c2.x,c2.y, p2.x, p2.y);
+}
+
+
+
+}
 void drawCircles(PGraphics g) {
 
-  int o = 150;
-  int r = 120;
-  int a = 4; 
-  int b = 48;
+  int o = 0;
+  int r = 25; //radius
+  int a = 1; 
+  int b = 100;
+  int startRad = 5;
 
   float x;
   float y; 
 
   g.beginShape();
-  for (int i = r; i > 10; i -= a) {
-    for (float j=TWO_PI; j>0; j-= TWO_PI/b) {
-      x = i*sin(j)+o;
-      y = i*cos(j)+o;
+  for (int i = startRad; i <= r; i += a) {
+    for (float j=TWO_PI; j>0; j-= TWO_PI/(i*10)) {
+      x = (i-(a*(j/TWO_PI)))*sin(j)+o;
+      y = (i-(a*(j/TWO_PI)))*cos(j)+o;
       g.vertex(x, y);
     }
   }
   g.endShape();
-  g.point(150, 290); //home
 }
 
 
+
+void drawSpiral(PGraphics g){
+  
+  
+}
+
 void drawBoxes(PGraphics g) {
 
-  int o = 150;
-  int r = 120;
-  int a = 4; 
+  int w = 25; //half box width
+  int a = 1; //step size
 
   g.beginShape();
-  for (int i = r; i > 10; i -= a) {
-    g.vertex(o+i, o+i);
-    g.vertex(o+i, o-i);
-    g.vertex(o-i, o-i);
-    g.vertex(o-i, o+i);
-    g.vertex(o+i, o+i);
+  for (int i = w; i > 1; i -= a) {
+    g.vertex(+i, +i);
+    g.vertex(+i, -i);
+    g.vertex(-i, -i);
+    g.vertex(-i, +i);
+    g.vertex(+i, +i);
   }
   g.endShape();
-  g.point(150, 290); //home
 }
 
 
@@ -109,13 +132,16 @@ void drawWord(PGraphics g) {
   //RG.setPolygonizerStep(15);
 
   RG.setPolygonizer(RG.UNIFORMLENGTH);
-  RG.setPolygonizerLength(4);
+  RG.setPolygonizerLength(0.3f);
   
   points1 = grp1.getPoints();
   points2 = grp2.getPoints();
   points3 = grp3.getPoints();  
   points4 = grp4.getPoints();
   
+  g.pushMatrix();
+    g.translate(-10,-10);
+  g.scale(0.1);
   g.beginShape();
   for(int i=1; i<points1.length; i++) {
     g.vertex(points1[i].x+o-fontHeight,points1[i].y+o);
@@ -139,6 +165,7 @@ void drawWord(PGraphics g) {
     g.vertex(points4[i].x+o+fontHeight,points4[i].y+o);
   }
   g.endShape();
+  g.popMatrix();
   
   
   

@@ -1,0 +1,13 @@
+## generic files to ignore
+*~
+*.lock
+*.DS_Store
+*.swp
+*.out
+*installLib_greg.command
+##ignore sketch build directories
+application.linux32
+application.linux64
+application.macosx
+application.windows32
+*distribution*

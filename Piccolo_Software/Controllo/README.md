@@ -11,7 +11,7 @@ Your Piccolo will need to have the usbTether firmware installed and be attached 
 - Unzip and run the appropriate application for your system.
 
 ####how to use
-- Load your own sag or select a generative pattern using the buttons on the left. 
+- Load your own svg or select a generative pattern using the buttons on the left. 
 - Lower your piccolo's drawing implement to the paper using either the thumb where on the side of the Piccolo or the UP_ DOWN_ buttons in Controllo.
 - Press the STARRT button or button_1 on your Piccolo to start drawing. 
 
