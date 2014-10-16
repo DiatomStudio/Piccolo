@@ -1,16 +1,23 @@
-PiccoloP5 is a Processing library for sending processing drawing commands to Piccolo the Tiny CNC-bot!
+##PiccoloLib v0.91  
+*PiccoloP5 is a Processing library for controlling Piccolo, the Tiny CNC-bot, from your processing sketch.*
 
-=== Install ===
-To Install the PiccoloP5 library,
+Piccolo.cc  
+Created by Diatom Studio, 16 October, 2014.  
+Released into the public domain.  
 
-unzip /distribution/PiccoloP5-1/download/PiccoloP5.zip to your processing libraries directory.  
-restart Processing.
-Select  Sketch > Import Library > Piccolo P5 
+##Installation  
 
-=== PiccoloP5 Example ===
+To Install the PiccoloP5 library:  
+1. Unzip /distribution/PiccoloP5-1/download/PiccoloP5.zip to your processing libraries directory.  
+2. Restart Processing.  
+3. Select  Sketch > Import Library > Piccolo P5  
 
+##Hello Piccolo Example
+
+```Processing
 import piccoloP5.*;
 import processing.serial.*;
+
 
 //Piccolo bed size in mm
 float bedWidth = 50.0; 
@@ -26,12 +33,16 @@ void setup() {
   piccolo.serial = new Serial(this, Serial.list()[Serial.list().length-1]); //This selects the last COM port listed on your system, this is usually Piccolo but not always. 
   piccolo.serialConnected = true;
   
-  piccolo.ellipse(0,0,dia,dia);   //tell piccolo to draw an ellipse
-  piccolo.start();                //start drawing
+  
+  for(int dia = 5; dia < bedWidth; dia += 5){
+   piccolo.ellipse(0,0,dia,dia); 
+  }
+  
+  piccolo.start();//start drawing
 }
 
 
 void draw(){
    piccolo.update(); //update piccolo
 }
-
+```
