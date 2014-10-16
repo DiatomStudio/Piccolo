@@ -1,4 +1,3 @@
-
 #include <Servo.h>      //Needed in PiccoloLib
 #include <PiccoloLib.h> //include PiccoloLib  
 
