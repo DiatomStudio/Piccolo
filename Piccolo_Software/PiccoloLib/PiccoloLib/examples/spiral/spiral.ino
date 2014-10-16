@@ -30,3 +30,6 @@ void drawSpiral(){
   }
   piccolo.endShape();
 }
+
+void loop(){
+}

@@ -5,6 +5,11 @@
   Released into the public domain.
 
 ###Changes:
+ 0.82
+ 
+ - Fixing bugs in examples.
+ - Removed incompatible examples. 
+
  0.81
  
  -  Minor restructuring of comments. 
