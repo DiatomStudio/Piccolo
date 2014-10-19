@@ -479,15 +479,15 @@ void PiccoloLib::ellipse(float x, float y, float width, float height){
     endShape();
     arc(x, y, width, height, 0, 0);
     beginShape();
-    arc(x, y, width, height, 0, TWO_PI+arcStep);
+    arc(x, y, width, height, 0, TWO_PI);
     endShape();
 }
 
 void PiccoloLib::arc(float x , float y , float width, float height, float startA, float stopA){
-    float arcStep = (stepSize/((width/2)*PI));
+    float arcStep = (stepSize/(width*PI)) * TWO_PI;
 
     for(float a=stopA ; a >= startA; a-=arcStep) {
-        vertex((sin(a)*width) + x, (cos(a)*height) + y);
+        vertex((sin(a)*width/2) + x, (cos(a)*height/2) + y);
     }
 }
 
