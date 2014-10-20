@@ -1,4 +1,4 @@
-##PiccoloLib v0.91  
+##PiccoloP5  
 *PiccoloP5 is a Processing library for controlling Piccolo, the Tiny CNC-bot, from your processing sketch.*
 
 Piccolo.cc  
