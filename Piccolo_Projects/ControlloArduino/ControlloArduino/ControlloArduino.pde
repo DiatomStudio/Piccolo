@@ -21,8 +21,7 @@ import controlP5.*;
 import java.util.*;
 
 
-boolean view3D = false; // display view in 3D
-
+//settings
 
 //Piccolo bed size in mm
 float bedWidth = 50.0; 
@@ -30,8 +29,10 @@ float bedHeight = 50.0;
 float bedDepth = 50.0; 
 float bedRenderWidth = 600;
 float bedRenderHeight = 600;
-PVector bedRenderStart = new PVector(250,50,0);
+PVector bedRenderStart = new PVector(340,50,0);
 
+PImage logo;
+boolean view3D = false; // display view in 3D
 
 //current position of drawing command to send
 float xPos = 0;          
@@ -40,7 +41,7 @@ float zPos = 0;
 
 boolean fitSVGtoBed = true;
 
-public boolean drawTool = false;
+public boolean drawTool = true;
 
 //TODO: this should be removed or moved to make code more straight forward.
 //sensor sets
@@ -55,25 +56,22 @@ canvas so that they always reflect what Piccolo is drawing.
 */
 
 List path = new ArrayList();
-
 PiccoloP5 piccolo = new PiccoloP5(bedWidth,bedHeight,bedDepth);
 ControlP5 controlP5;
 CheckBox drawPlotsiOutput;
 Knob pressureKnob;
 
+
 PGraphics plotsiOutputCanvas; 
-
 PVector prevDrawPoint = new PVector(0,0,0);
-
-
-
-
 
 void setup() {
 
- // size(displayWidth, displayHeight,OPENGL);
+  //size(displayWidth, displayHeight,OPENGL);
   // orientation(LANDSCAPE);  // the hot dog way
 
+  //Comment in if not running on Android 
+  //size(1280,600,OPENGL);
 
   plotsiOutputCanvas = createGraphics((int)bedWidth, (int)bedHeight);
   plotsiOutputCanvas.beginDraw();
@@ -84,12 +82,13 @@ void setup() {
   piccolo.setStepRes(1f);
   piccolo.bezierDetail(20); 
   piccolo.rotate(PI/2.0f);
-  piccolo.useHttpConnection("https://agent.electricimp.com/YfD2LsizYsy9"); ///use HTTP streaming.
+  piccolo.useHttpConnection("https://agent.electricimp.com/e49JO637bBHj"); ///use HTTP streaming.
 
   //setup GUI
   controlP5 = new ControlP5(this);
   drawInterface();
 
+  logo = loadImage("logo2.png");
 /*
   String s = (String) JOptionPane.showInputDialog(
       null,
@@ -127,6 +126,8 @@ void draw() {
 
   
   background(255, 255, 255);
+  
+  image(logo, 20,40,260,109);
  // ortho(0, width, 0, height); // same as ortho()
   pushMatrix();
   translate((bedRenderWidth/2) + bedRenderStart.x, (bedRenderWidth/2)+bedRenderStart.y);
@@ -143,10 +144,12 @@ void draw() {
 
   pushMatrix();
   translate(0,0);
+  strokeWeight(1);
   rect(-(bedRenderWidth/2),-(bedRenderWidth/2),bedRenderWidth,bedRenderHeight);
   popMatrix();
 
   rotate(-PI/2.0f);
+  strokeWeight(5);
   piccolo.draw(g,bedRenderWidth);
   popMatrix();
   piccolo.update();
@@ -313,7 +316,7 @@ public void start(int val) {
 }
 
 
-void stop(){
+void clear(){
  piccolo.clear();
 }
 
@@ -412,8 +415,11 @@ public void bezier(){
   public String sketchRenderer() {
     return P3D; 
   }
-
-
-
-
-
+  
+  public void portrait(){
+    Face face = new Face();
+    face.randomFace();
+    piccolo.clear();
+    clearCanvas();
+    face.render(piccolo);
+  }

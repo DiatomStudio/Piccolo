@@ -554,10 +554,10 @@ public class PiccoloP5 extends PGraphics {
 																	// prev.z !=
 																	// 0)
 					g.stroke(0, 0, 0, 50);
-				else
+				else{
 					g.stroke(0);
 
-				g.strokeWeight(1);
+				//g.strokeWeight(1);
 
 				if (debugDraw)
 					PApplet.println("Draw line {x:" + p.x * scale + " y:" + p.y
@@ -567,6 +567,7 @@ public class PiccoloP5 extends PGraphics {
 
 				g.line(p.x * scale, p.y * scale, p.z * scale, prev.x * scale,
 						prev.y * scale, prev.z * scale);
+				}
 			}
 
 			prev = p;

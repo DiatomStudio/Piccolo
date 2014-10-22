@@ -3,19 +3,28 @@ void drawInterface() {
 
   drawPlotsiOutput = controlP5.addCheckBox("draw output", 100, 100);  
   
+  /*
     controlP5.addToggle("draw")
      .setPosition(10,10)
      .setSize(80,19)
      .plugTo(this,"drawTool")
      ;
-   
+   */
+   PFont font =  loadFont("SegoeUI-22.vlw");
+   controlP5.setControlFont(font);
      controlP5.addTextlabel("DRAW")
      .setText("DRAW")
      .setPosition(10,14);
 
 
 
-  controlP5.addButton("load_SVG", 0, 10, 30, 80, 19);
+
+int btnWidth = 120;
+int btnHeight = 40;
+int btnSpacing = 30;
+int layoutY = 120;
+
+///  controlP5.addButton("load_SVG", 0, 10, 30, 80, 19);
   
 
 
@@ -23,13 +32,15 @@ void drawInterface() {
      
      
      //  controlP5.addButton("brush_Mustache", 0, 10, 120, 80, 19);
-  controlP5.addButton("bezier", 0, 10, 90, 80, 19);  
-  controlP5.addButton("logo", 0, 10, 110, 80, 19);
+  controlP5.addButton("bezier", 0, 20, layoutY+=(btnSpacing+btnHeight), btnWidth, btnHeight);  
+  controlP5.addButton("logo", 0, 20, layoutY+=(btnSpacing+btnHeight), btnWidth, btnHeight);
   //  controlP5.addButton("maze", 0, 10, 180, 80, 19);
-  controlP5.addButton("circles", 0, 10, 130, 80, 19);
-  controlP5.addButton("boxes", 0, 10, 150, 80, 19);
-  controlP5.addButton("diagonals", 0, 10, 170, 80, 19);
-  controlP5.addButton("word", 0, 10, 190, 80, 19);
+  controlP5.addButton("circles", 0, 20, layoutY+=(btnSpacing+btnHeight), btnWidth, btnHeight);
+  controlP5.addButton("boxes", 0, 20, layoutY+=(btnSpacing+btnHeight), btnWidth, btnHeight);
+  //controlP5.addButton("diagonals", 0, 10, layoutY+=(btnSpacing+btnHeight),btnWidth, btnHeight);
+  //controlP5.addButton("word", 0, 10, layoutY+=(btnSpacing+btnHeight), btnWidth, btnHeight);
+  controlP5.addButton("portrait", 0, 20, layoutY+=(btnSpacing+btnHeight), btnWidth, btnHeight);
+  
 
 /*
   pressureKnob = controlP5.addKnob("pressure")
@@ -50,9 +61,9 @@ void drawInterface() {
   //  controlP5.addButton("Up",0, 70, 220, 19, 19);
   //  controlP5.addButton("Down",0, 70, 240, 19, 19);
 
-  controlP5.addButton("home", 0, 10, height-80, 80, 19);
-  controlP5.addButton("start", 0, width-150, height-60, 160, 40);
-  controlP5.addButton("stop", 0, 10, height-40, 80, 19);
+  ///controlP5.addButton("home", 0, 10, height-120, btnWidth, btnHeight);
+  controlP5.addButton("start", 0, width-150, height-120, btnWidth, btnHeight);
+  controlP5.addButton("clear", 0, width-150, height-200, btnWidth, btnHeight);
 
 }
 

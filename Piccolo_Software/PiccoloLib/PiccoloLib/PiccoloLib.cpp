@@ -448,10 +448,13 @@ void PiccoloLib::vertex(float x, float y, float z) {
     }
 
 }
-
+/*
+ Draw a line.
+ */
 void PiccoloLib::line(float x1, float y1, float x2, float y2){
-    vertex(x1, y1, penDownPos);
-    vertex(x2, y2, penDownPos);
+    beginShape();
+    line(x1,y1,penDownPos,x2,y2,penDownPos);x
+    endShape();
 }
 
 void PiccoloLib::line(float x1, float y1, float z1, float x2, float y2, float z2){
@@ -459,9 +462,15 @@ void PiccoloLib::line(float x1, float y1, float z1, float x2, float y2, float z2
     vertex(x2, y2, z2);
 }
 
+/*
+ Draw a rectangle.
+ */
 void PiccoloLib::rect(float x, float y, float width,float height) {
+    beginShape();
     rect(x, y, penDownPos, width, height);
+    endShape();
 }
+
 
 void PiccoloLib::rect(float x, float y, float z, float width,float height) {
     vertex(x, y, z);
@@ -471,8 +480,11 @@ void PiccoloLib::rect(float x, float y, float z, float width,float height) {
     vertex(x, y, z);
 }
 
+/*
+ Draw a ellipse.
+ */
 void PiccoloLib::ellipse(float x, float y, float width, float height){
-    if(width == 0 || height == 0)
+    if(width == 0 || height == 0) //check for 0 size
         return;
     
     float arcStep = (stepSize/(width*PI));
@@ -483,11 +495,19 @@ void PiccoloLib::ellipse(float x, float y, float width, float height){
     endShape();
 }
 
-void PiccoloLib::arc(float x , float y , float width, float height, float startA, float stopA){
+/*
+ Draw a arc.
+ TODO: should this be penDown instead?
+ */
+void PiccoloLib::arc(float x , float y ,float width, float height, float startA, float stopA){
+    arc(x,y,width,Z.getPos(),height,startA,stopA);
+}
+
+void PiccoloLib::arc(float x , float y , float z,float width, float height, float startA, float stopA){
     float arcStep = (stepSize/((width/2)*PI));
 
     for(float a=stopA ; a >= startA; a-=arcStep) {
-        vertex((sin(a)*width) + x, (cos(a)*height) + y);
+        vertex((sin(a)*width) + x, (cos(a)*height) + y,z);
     }
 }
 
@@ -579,7 +599,6 @@ float PiccoloLib::calcFloat(int data[], int ind) {
 */
 
 /* ================================ serial functions ================================= */
-
 
 
 void PiccoloLib::serialSetup() {
