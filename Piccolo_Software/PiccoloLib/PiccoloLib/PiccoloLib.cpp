@@ -491,23 +491,15 @@ void PiccoloLib::ellipse(float x, float y, float width, float height){
     endShape();
     arc(x, y, width, height, 0, 0);
     beginShape();
-    arc(x, y, width, height, 0, TWO_PI+arcStep);
+    arc(x, y, width, height, 0, TWO_PI);
     endShape();
 }
 
-/*
- Draw a arc.
- TODO: should this be penDown instead?
- */
-void PiccoloLib::arc(float x , float y ,float width, float height, float startA, float stopA){
-    arc(x,y,width,Z.getPos(),height,startA,stopA);
-}
-
-void PiccoloLib::arc(float x , float y , float z,float width, float height, float startA, float stopA){
-    float arcStep = (stepSize/((width/2)*PI));
+void PiccoloLib::arc(float x , float y , float width, float height, float startA, float stopA){
+    float arcStep = (stepSize/(width*PI)) * TWO_PI;
 
     for(float a=stopA ; a >= startA; a-=arcStep) {
-        vertex((sin(a)*width) + x, (cos(a)*height) + y,z);
+        vertex((sin(a)*width/2) + x, (cos(a)*height/2) + y);
     }
 }
 
