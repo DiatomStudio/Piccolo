@@ -453,7 +453,7 @@ void PiccoloLib::vertex(float x, float y, float z) {
  */
 void PiccoloLib::line(float x1, float y1, float x2, float y2){
     beginShape();
-    line(x1,y1,penDownPos,x2,y2,penDownPos);x
+    line(x1,y1,penDownPos,x2,y2,penDownPos);
     endShape();
 }
 
