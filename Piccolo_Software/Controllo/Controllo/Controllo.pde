@@ -124,7 +124,8 @@ void draw() {
 
   
   background(255, 255, 255);
-  ortho(0, width, 0, height); // same as ortho()
+   // Commenting line below bo make it work on Processing 3.3
+  // ortho(0, width, 0, height); // same as ortho()
   pushMatrix();
   translate((bedRenderWidth/2) + 150, (bedRenderWidth/2)+20,0);
   
@@ -139,7 +140,8 @@ void draw() {
   noFill();
 
   pushMatrix();
-  translate(0,0,-(bedRenderWidth/2));
+  // Commenting line below bo make it work on Processing 3.3
+  //translate(0,0,-(bedRenderWidth/2));
   rect(-(bedRenderWidth/2),-(bedRenderWidth/2),bedRenderWidth,bedRenderWidth);
   popMatrix();
 
