@@ -1,4 +1,4 @@
-#PiccoloLib#
+# PiccoloLib #
 
 PiccoloLib is a library for [Arduino](http://www.arduino.cc) that makes it simple to program a Piccolo.
 
@@ -13,7 +13,7 @@ For an overview of PiccoloLib basics, take a look at [Getting Started](../../../
 
 ---
 
-##Installation##
+## Installation ##
 
 1. Download PiccoloLib_current.zip
 2. Open the zip in Arduino by: Sketch > Import Library > Add Library
@@ -23,15 +23,15 @@ If you are not sure where your libraries folder is, have a look at the Arduino l
 
 ---
 
-##Reference##
+## Reference ##
 
 Piccolo's output is intended to be used in mm, however you can scale the output to any arbitrary units using *calibrate()*.
 
 
-###PiccoloLib Class###
+### PiccoloLib Class ###
 
 ---
-####Setup, Configuration & Motion####
+#### Setup, Configuration & Motion ####
 
 `void setup()`  
 Sets up piccolo using the default pin assignments for the servos:  
@@ -77,7 +77,7 @@ This also affects curvature when using *ellipse()*, *arc()*, or *bezier()* - a s
 Disables servo motion, for debugging purposes.
 
 ---
-####Piccolo Inputs####
+#### Piccolo Inputs ####
 
 `float readThumbwheel()`  
 Returns a value from 0 to 1023 based on the position of the thumbwheel.
@@ -89,7 +89,7 @@ Returns true if button one is pressed.
 Returns true if button two is pressed.
 
 ---
-####Mechanical Control####
+#### Mechanical Control ####
 
 `void moveX(float x)`  
 `void moveY(float y)`  
@@ -111,7 +111,7 @@ Will move piccolo in each axis based on the thumbwheel position, between the min
 Set or retrieve the pen-down position.
 
 ---
-####Making Shapes####
+#### Making Shapes ####
 
 In general all drawing commands follow the same format as Processing drawing commands, for more info on these please visit: http://processing.org/reference/
 
@@ -136,7 +136,7 @@ Moves piccolo to (x,y,z) using the step size and speed to control the motion.
 `float bezierTangent(float a, float b, float c, float d, float t)`  
 
 ---
-####Serial Communication####
+#### Serial Communication ####
 
 `void serialSetup()`  
 Opens a serial port at 115200 baud. ready for Piccolo instructions from Controllo or another host device. This is only needed if Piccolo is controlled remotely. 
@@ -150,13 +150,13 @@ This is also useful for retrieving coordinates from Piccolo to debug your toolpa
 
 
 ---
-###PiccoloAxis class###
+### PiccoloAxis class ###
 
 Each servo is controlled as a PiccoloAxis object.  
 *uS = pulse width in microseconds of signal sent to the servo.*
 
 ---
-####Variable Heirarchy####
+#### Variable Heirarchy ####
 
 1. `uScenter` - Defines the center position of the servo, based on where we want piccolo think the center is.  Normally this would be mid-way between the minimum and maximum rotation of the servo.  Default is 1551uS.  
 `bedSize` - We define what we want the bed size to be.  The default is 50mm, which is a conservative size that should fit within the range of most DS929-MG servos.  
@@ -177,7 +177,7 @@ Each servo is controlled as a PiccoloAxis object.
 `uSdeg  = ((target*uSmm)/actual) * (PI/360)*gearSize`
 
 ---
-####Setup, Configuration & Motion####
+#### Setup, Configuration & Motion ####
 
 `void setup(int _pin)`  
 `void setup(int _pin, int _uScenter, float _bedSize)`  
@@ -196,7 +196,7 @@ Each servo is controlled as a PiccoloAxis object.
 `void move(float _pos)`  
 
 ---
-####Helper Functions####
+#### Helper Functions ####
 
 `int getPin()`  
 `int getuScenter()`  

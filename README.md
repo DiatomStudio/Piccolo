@@ -1,4 +1,4 @@
-#Piccolo, the tiny cnc bot#
+# Piccolo, the tiny cnc bot #
 
 A pocket sized open source CNC-bot.
 
