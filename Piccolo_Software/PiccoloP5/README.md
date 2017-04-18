@@ -1,18 +1,18 @@
-##PiccoloP5  
+## PiccoloP5  
 *PiccoloP5 is a Processing library for controlling Piccolo, the Tiny CNC-bot, from your processing sketch.*
 
 Piccolo.cc  
 Created by Diatom Studio, 16 October, 2014.  
 Released into the public domain.  
 
-##Installation  
+## Installation  
 
 To Install the PiccoloP5 library:  
 1. Unzip /distribution/PiccoloP5-1/download/PiccoloP5.zip to your processing libraries directory.  
 2. Restart Processing.  
 3. Select  Sketch > Import Library > Piccolo P5  
 
-##Hello Piccolo Example
+## Hello Piccolo Example
 
 ```Processing
 import piccoloP5.*;
